@@ -23,6 +23,7 @@ public class Parser {
      * @param filePath path ke file input
      * @return Board terbangun
      */
+    @SuppressWarnings("unused")
     public static Board parse(String filePath)
             throws IOException, InvalidInputException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -175,8 +176,6 @@ public class Parser {
         }
         return table;
     }
-
-    // Tambahkan method berikut ke class Parser yang sudah ada
 
     /**
      * Parses a file and returns a Board.

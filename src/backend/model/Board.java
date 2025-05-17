@@ -137,9 +137,7 @@ public class Board {
         }
         return sb.toString();
     }
-
-    // Tambahkan method berikut ke class Board yang sudah ada
-
+    
     /**
      * Gets all cars in the board.
      * @return List of all cars
