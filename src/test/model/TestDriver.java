@@ -31,6 +31,14 @@ public class TestDriver {
             System.out.printf("After moving '%c' by %+d:%n", targetId, delta);
             System.out.println(moved);
 
+            targetId = 'F';
+            delta = 3;
+            moved = moved.applyMove(targetId, delta, board.getZobristTable());
+
+            // 5) Tampilkan hasil setelah gerakan
+            System.out.printf("After moving '%c' by %+d:%n", targetId, delta);
+            System.out.println(moved);
+
         } catch (IOException | InvalidInputException e) {
             System.err.println("Error during parsing or applying move:");
             e.printStackTrace();
