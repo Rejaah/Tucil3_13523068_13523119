@@ -23,6 +23,7 @@ public class Parser {
      * @param filePath path ke file input
      * @return Board terbangun
      */
+    @SuppressWarnings("unused")
     public static Board parse(String filePath)
             throws IOException, InvalidInputException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -72,11 +73,23 @@ public class Parser {
                 String line = br.readLine();
                 if (line == null)
                     throw new InvalidInputException("Grid kurang dari " + rows + " baris");
+                
                 // hilangkan whitespace internal
                 String compact = line.replaceAll("\\s+", "");
+                
                 if (compact.length() == cols) {
+                    // Check for internal exit 'K'
+                    if (compact.contains("K")) {
+                        if (compact.chars().filter(ch -> ch == 'K').count() != 1) {
+                            throw new InvalidInputException("Grid harus mengandung tepat satu 'K'");
+                        }
+                        exitRow = r;
+                        exitCol = compact.indexOf('K');
+                        compact = compact.replace('K', '.');  // Replace K with empty
+                    }
                     rawGrid.add(compact);
-                } else if (compact.length() == cols + 1) {
+                } 
+                else if (compact.length() == cols + 1) {
                     // exit samping: satu K di tepi
                     long countK = compact.chars().filter(ch -> ch == 'K').count();
                     if (countK != 1)
@@ -95,7 +108,8 @@ public class Parser {
                         throw new InvalidInputException(
                             "Baris grid ke-" + (r+1) + " ekstra 'K' harus di tepi");
                     }
-                } else {
+                } 
+                else {
                     throw new InvalidInputException(
                         "Panjang baris grid ke-" + (r+1) +
                         " harus " + cols + " atau " + (cols+1));
@@ -132,7 +146,7 @@ public class Parser {
                 grid[r] = rowStr.toCharArray();
                 for (int c = 0; c < cols; c++) {
                     char ch = grid[r][c];
-                    if (ch == '.') continue;
+                    if (ch == '.' || ch == 'K') continue;
                     posMap.computeIfAbsent(ch, k -> new ArrayList<>())
                           .add(new int[]{r, c});
                 }
@@ -175,8 +189,6 @@ public class Parser {
         }
         return table;
     }
-
-    // Tambahkan method berikut ke class Parser yang sudah ada
 
     /**
      * Parses a file and returns a Board.

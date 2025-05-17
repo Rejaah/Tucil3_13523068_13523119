@@ -12,9 +12,9 @@ mkdir -p "$OUT_DIR"
 # Compile semua kode utama
 echo "Compiling main sources..."
 javac -d "$OUT_DIR" \
-    src/main/model/*.java \
-    src/main/exception/*.java
-    # src/main/solver/*.java \
+    src/backend/model/*.java \
+    src/backend/exception/*.java \
+    src/backend/algorithm/*.java
     # src/main/util/*.java \
     # src/main/app/*.java \
 
@@ -22,10 +22,10 @@ javac -d "$OUT_DIR" \
 echo "Compiling TestDriver..."
 javac -d "$OUT_DIR" \
     -cp "$OUT_DIR" \
-    src/test/model/TestDriver.java
+    src/test/backend/TestDriverUCS.java 
 
 # Jalankan test driver
 echo "Running tests..."
-java -cp "$OUT_DIR" test.model.TestDriver
+java -cp "$OUT_DIR" test.backend.TestDriverUCS
 
 echo "Build & tests completed successfully."
