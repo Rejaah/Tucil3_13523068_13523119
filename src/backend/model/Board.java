@@ -1,4 +1,4 @@
-package main.model;
+package backend.model;
 
 import java.util.*;
 
@@ -136,5 +136,31 @@ public class Board {
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    // Tambahkan method berikut ke class Board yang sudah ada
+
+    /**
+     * Gets all cars in the board.
+     * @return List of all cars
+     */
+    public List<Car> getCars() {
+        return new ArrayList<>(cars.values());
+    }
+
+    /**
+     * Gets the number of rows in the board.
+     * @return Number of rows
+     */
+    public int getRows() {
+        return rows;
+    }
+
+    /**
+     * Gets the number of columns in the board.
+     * @return Number of columns
+     */
+    public int getCols() {
+        return cols;
     }
 }
