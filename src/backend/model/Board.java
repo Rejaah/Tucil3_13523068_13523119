@@ -44,14 +44,26 @@ public class Board {
         List<Board> neighbors = new ArrayList<>();
         for (Car c : cars.values()) {
             // Gerak mundur hingga mentok
-            for (int delta = -1; canMove(c, delta); delta--){
-                neighbors.add(applyMove(c.getId(), delta, zobristTable));
+            int delta = -1;
+            int lastValidDelta = 0;
+            while (canMove(c, delta)) {
+                lastValidDelta = delta;
+                delta--;
             }
-            // Gerak maju
-            for (int delta = 1; canMove(c, delta); delta++){
-                neighbors.add(applyMove(c.getId(), delta, zobristTable));
+            if (lastValidDelta != 0) {
+                neighbors.add(applyMove(c.getId(), lastValidDelta, zobristTable));
             }
 
+            // Gerak maju
+            delta = 1;
+            lastValidDelta = 0;
+            while (canMove(c,delta)) {
+                lastValidDelta = delta;
+                delta++;
+            }
+            if (lastValidDelta != 0) {
+                neighbors.add(applyMove(c.getId(), lastValidDelta, zobristTable));
+            }
         }
         return neighbors;
     }
@@ -64,6 +76,28 @@ public class Board {
 
         if (newR < 0 || newC < 0 || endR >= rows || endC >= cols) {
             return false;
+        }
+
+        // Cek tabrakan dengan mobil lain
+        // Buat set posisi yang ditempati mobil c sebelum pindah
+        Set<String> oldPositions = new HashSet<>();
+        int r0 = c.getRow();
+        int c0 = c.getCol();
+        for (int i = 0; i < c.getLength(); i++) {
+            int rr = r0 + (c.isHorizontal() ? 0 : i);
+            int cc = c0 + (c.isHorizontal() ? i : 0);
+            oldPositions.add(rr + "," + cc);
+        }
+
+        // Periksa semua posisi baru yang akan ditempati mobil c
+        for (int i = 0; i < c.getLength(); i++) {
+            int rr = newR + (c.isHorizontal() ? 0 : i);
+            int cc = newC + (c.isHorizontal() ? i : 0);
+            // Jika sel ini sudah ditempati oleh mobil lain, return false
+            char cell = grid[rr][cc];
+            if (cell != '.' && !oldPositions.contains(rr + "," + cc)) {
+                return false;
+            }
         }
 
         return true;
@@ -104,6 +138,43 @@ public class Board {
         if (!(o instanceof Board)) return false;
         Board board = (Board) o;
         return this.zobristKey == board.zobristKey;
+    }
+
+    public boolean isGoal() {
+        Car player = cars.get('P');
+        if (player == null) return false;
+
+        if (player.isHorizontal()) {
+            if (getExitCol() < 0) {
+                int leftEndCol = player.getCol() - 1;
+                return (player.getRow() == exitRow) && (leftEndCol == exitCol);
+            } else {
+                int rightEndCol = player.getCol() + player.getLength();
+                return (player.getRow() == exitRow) && (rightEndCol == exitCol);
+            }
+        } else {
+            if (getExitRow() < 0) {
+                int topEndRow = player.getRow() - 1;
+                return (topEndRow == exitRow) && (player.getCol() == exitCol);
+            } else {
+                int bottomEndRow = player.getRow() + player.getLength();
+                return (bottomEndRow == exitRow) && (player.getCol() == exitCol);        
+            }
+        }
+    }
+
+    public void printDebugInfo() {
+        System.out.println("\n[DEBUG BOARD STATE]");
+        System.out.println("Exit position: (" + exitRow + "," + exitCol + ")");
+        System.out.println("Zobrist key: " + zobristKey);
+        System.out.println("Cars positions:");
+        
+        cars.forEach((id, car) -> {
+            System.out.printf("  %s: %s\n", id, car.toString());
+        });
+        
+        System.out.println("\nCurrent grid:");
+        System.out.println(this.toString());
     }
 
     public int hashCode() {
