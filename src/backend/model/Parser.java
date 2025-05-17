@@ -1,6 +1,7 @@
-package main.model;
+package backend.model;
 
-import main.exception.InvalidInputException;
+import backend.exception.InvalidInputException;
+import backend.exception.ParserException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -173,5 +174,23 @@ public class Parser {
             }
         }
         return table;
+    }
+
+    // Tambahkan method berikut ke class Parser yang sudah ada
+
+    /**
+     * Parses a file and returns a Board.
+     * Wrapper method for compatibility with GUI.
+     * 
+     * @param filePath Path to the input file
+     * @return A Board object
+     * @throws ParserException if parsing fails
+     */
+    public static Board parseFile(String filePath) throws backend.exception.ParserException {
+        try {
+            return parse(filePath);
+        } catch (IOException | InvalidInputException e) {
+            throw new ParserException("Error parsing file: " + e.getMessage(), e);
+        }
     }
 }

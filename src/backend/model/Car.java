@@ -1,4 +1,4 @@
-package main.model;
+package backend.model;
 
 public class Car {
     private final char id;
@@ -64,5 +64,24 @@ public class Car {
                 ", row=" + row +
                 ", col=" + col +
                 '}';
+    }
+
+    //tambahan 
+
+    /**
+     * Checks if this car is vertical (not horizontal).
+     * @return true if vertical, false if horizontal
+     */
+    
+    public boolean isVertical() {
+        return !isHorizontal;
+    }
+
+    /**
+     * Checks if this car is the primary car (target to exit).
+     * @return true if primary car, false otherwise
+     */
+    public boolean isPrimary() {
+        return this.id == 'P';
     }
 }

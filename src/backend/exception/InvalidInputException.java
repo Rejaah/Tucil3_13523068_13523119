@@ -1,4 +1,4 @@
-package main.exception;
+package backend.exception;
 
 public class InvalidInputException extends Exception {
     /**

@@ -1,4 +1,4 @@
-package main.model;
+package backend.model;
 
 public class Move {
     private final char carId;
