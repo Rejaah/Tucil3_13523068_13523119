@@ -11,14 +11,25 @@ public class HeuristicManhattan implements Heuristic {
         int exitRow = board.getExitRow();
         int exitCol = board.getExitCol();
 
-        // Jika mobil utama horizontal
+        // Jika mobil utama bergerak horizontal
         if (player.isHorizontal()) {
             int rightmostCol = player.getCol() + player.getLength() - 1;
-            return Math.abs(player.getRow() - exitRow) + Math.abs(rightmostCol - exitCol);
-        } else {
-            // Jika mobil utama vertikal
+            if (exitCol > rightmostCol) {
+                return Math.abs(player.getRow() - exitRow) + Math.abs(rightmostCol - exitCol);
+            }
+            else {
+                return Math.abs(player.getRow() - exitRow) + Math.abs(player.getCol() - exitCol);
+            }
+        }
+        // Jika mobil utama bergerak vertikal 
+        else {
             int bottomRow = player.getRow() + player.getLength() - 1;
-            return Math.abs(player.getCol() - exitCol) + Math.abs(bottomRow - exitRow);
+            if (exitRow > bottomRow) {
+                return Math.abs(player.getCol() - exitCol) + Math.abs(bottomRow - exitRow); 
+            }
+            else {
+                return Math.abs(player.getCol() - exitCol) + Math.abs(player.getRow() - exitRow); 
+            }
         }
     }
 
