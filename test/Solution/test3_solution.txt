@@ -1,0 +1,149 @@
+Algoritma: A* Search
+Heuristik: Blocking Cars
+Nodes dikunjungi: 478
+Waktu eksekusi: 28 ms
+
+Papan Awal
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X Y C C C H 
+X Y I . . H 
+R R I . . . 
+
+Gerakan 1: H-bawah
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X Y C C C . 
+X Y I . . H 
+R R I . . H 
+
+Gerakan 2: C-kanan
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X Y . C C C 
+X Y I . . H 
+R R I . . H 
+
+Gerakan 3: I-atas
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X Y I C C C 
+X Y I . . H 
+R R . . . H 
+
+Gerakan 4: R-kanan
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X Y I C C C 
+X Y I . . H 
+. . . R R H 
+
+Gerakan 5: X-bawah
+. A A B E E 
+. . D B F G 
+P P D B F G 
+. Y I C C C 
+X Y I . . H 
+X . . R R H 
+
+Gerakan 6: Y-bawah
+. A A B E E 
+. . D B F G 
+P P D B F G 
+. . I C C C 
+X Y I . . H 
+X Y . R R H 
+
+Gerakan 7: I-bawah
+. A A B E E 
+. . D B F G 
+P P D B F G 
+. . . C C C 
+X Y I . . H 
+X Y I R R H 
+
+Gerakan 8: C-kiri
+. A A B E E 
+. . D B F G 
+P P D B F G 
+C C C . . . 
+X Y I . . H 
+X Y I R R H 
+
+Gerakan 9: H-atas
+. A A B E E 
+. . D B F G 
+P P D B F G 
+C C C . . H 
+X Y I . . H 
+X Y I R R . 
+
+Gerakan 10: R-kanan
+. A A B E E 
+. . D B F G 
+P P D B F G 
+C C C . . H 
+X Y I . . H 
+X Y I . R R 
+
+Gerakan 11: B-bawah
+. A A . E E 
+. . D . F G 
+P P D . F G 
+C C C B . H 
+X Y I B . H 
+X Y I B R R 
+
+Gerakan 12: F-bawah
+. A A . E E 
+. . D . . G 
+P P D . . G 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+
+Gerakan 13: E-kiri
+. A A E E . 
+. . D . . G 
+P P D . . G 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+
+Gerakan 14: G-atas
+. A A E E G 
+. . D . . G 
+P P D . . . 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+
+Gerakan 15: A-kiri
+A A . E E G 
+. . D . . G 
+P P D . . . 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+
+Gerakan 16: D-atas
+A A D E E G 
+. . D . . G 
+P P . . . . 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+
+Gerakan 17: P-kanan
+A A D E E G 
+. . D . . G 
+. . . . P P 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+
