@@ -14,18 +14,18 @@ echo "Compiling main sources..."
 javac -d "$OUT_DIR" \
     src/backend/model/*.java \
     src/backend/exception/*.java \
-    src/backend/algorithm/*.java
-    # src/main/util/*.java \
+    src/backend/algorithm/*.java \
+    src/backend/util/*.java
     # src/main/app/*.java \
 
 # Compile test driver
 echo "Compiling TestDriver..."
 javac -d "$OUT_DIR" \
     -cp "$OUT_DIR" \
-    src/test/backend/TestDriverUCS.java 
+    src/test/backend/TestDriverGBFS.java 
 
 # Jalankan test driver
 echo "Running tests..."
-java -cp "$OUT_DIR" test.backend.TestDriverUCS
+java -cp "$OUT_DIR" test.backend.TestDriverGBFS
 
 echo "Build & tests completed successfully."
