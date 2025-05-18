@@ -8,5 +8,6 @@ module tucil3 {
     exports backend.model;
     exports backend.algorithm;
     exports backend.exception;
+    exports backend.util;
     exports gui;
 }
