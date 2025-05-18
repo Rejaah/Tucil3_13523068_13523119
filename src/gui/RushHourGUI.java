@@ -291,7 +291,7 @@ public class RushHourGUI extends Application {
     private PathfindingAlgorithm getAlgorithmByName(String name, Heuristic heuristic) {
         switch (name) {
             case "Greedy Best First Search":
-                // return new backend.algorithm.GreedyBestFirstSearch();
+                return new backend.algorithm.GBFS(heuristic);
             case "Uniform Cost Search (UCS)":
                 return new backend.algorithm.UCS(); 
             case "A* Search":

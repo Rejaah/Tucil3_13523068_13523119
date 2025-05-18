@@ -23,9 +23,9 @@ public class UCS implements PathfindingAlgorithm {
             UCSNode currentNode = queue.poll();
             nodesVisited++;
 
-            // Tampilkan state board yang sedang diperiksa
-            System.out.printf("Visited node #%d, cost = %d%n", nodesVisited, currentNode.cost);
-            System.out.println(currentNode.board);  // panggil toString() di Board
+            // // Tampilkan state board yang sedang diperiksa
+            // System.out.printf("Visited node #%d, cost = %d%n", nodesVisited, currentNode.cost);
+            // System.out.println(currentNode.board);  // panggil toString() di Board
 
             if (currentNode.getBoard().isGoal()) {
                 executionTime = System.currentTimeMillis() - startTime;
