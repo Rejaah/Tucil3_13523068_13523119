@@ -22,10 +22,10 @@ javac -d "$OUT_DIR" \
 echo "Compiling TestDriver..."
 javac -d "$OUT_DIR" \
     -cp "$OUT_DIR" \
-    src/test/backend/TestDriverGBFS.java 
+    src/test/backend/TestDriverUCS.java 
 
 # Jalankan test driver
 echo "Running tests..."
-java -cp "$OUT_DIR" test.backend.TestDriverGBFS
+java -cp "$OUT_DIR" test.backend.TestDriverUCS
 
 echo "Build & tests completed successfully."

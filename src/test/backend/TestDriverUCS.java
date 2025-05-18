@@ -11,7 +11,7 @@ import java.util.List;
 
 public class TestDriverUCS {
     public static void main(String[] args) {
-        String filePath = "src/test/model/board.txt"; // sesuaikan path file input Anda
+        String filePath = "src/test/testcase/misteri5.txt"; // sesuaikan path file input Anda
 
         try {
             // Parse board awal
