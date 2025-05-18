@@ -11,10 +11,12 @@ import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import backend.model.Board;
 import backend.exception.ParserException;
 import backend.model.Parser;
+import backend.util.Heuristic;
 import backend.algorithm.PathfindingAlgorithm;
 
 /**
@@ -90,6 +92,26 @@ public class RushHourGUI extends Application {
         );
         algorithmCombo.setValue("A* Search");
         algorithmCombo.setPrefWidth(200);
+
+        // Heuristic selection
+        Label heuristicLabel = new Label("Select Heuristic:");
+        ComboBox<String> heuristicCombo = new ComboBox<>();
+        heuristicCombo.getItems().addAll(
+            "Manhattan Distance", 
+            "Blocking Cars"
+        );
+        heuristicCombo.setValue("Manhattan Distance");
+        heuristicCombo.setPrefWidth(200);
+
+        // Disable heuristic ComboBox if UCS is selected
+        algorithmCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if ("Uniform Cost Search (UCS)".equals(newVal)) {
+                heuristicCombo.setDisable(true); // Disable heuristic selection
+            } else {
+                heuristicCombo.setDisable(false); // Enable heuristic selection
+            }
+        });
+
         
         // Run button
         runButton = new Button("Run Solver");
@@ -114,6 +136,9 @@ public class RushHourGUI extends Application {
             new Separator(),
             algoLabel,
             algorithmCombo,
+            new Separator(),
+            heuristicLabel,
+            heuristicCombo,
             runButton,
             new Separator(),
             statsBox
@@ -162,7 +187,15 @@ public class RushHourGUI extends Application {
             
             // Get selected algorithm
             String algorithmName = algorithmCombo.getValue();
-            PathfindingAlgorithm algorithm = getAlgorithmByName(algorithmName);
+            // Get selected heuristic if applicable
+            Heuristic heuristic = null;
+            if (!"Uniform Cost Search (UCS)".equals(algorithmName)) {
+                String heuristicName = heuristicCombo.getValue();
+                heuristic = getHeuristicByName(heuristicName);
+            }
+            
+            // Initialize the selected algorithm with the chosen heuristic
+            PathfindingAlgorithm algorithm = getAlgorithmByName(algorithmName, heuristic);
             
             if (algorithm != null) {
                 try {
@@ -170,12 +203,14 @@ public class RushHourGUI extends Application {
                     statsLabel.setText("Running algorithm...");
                     
                     // Run the algorithm
-                    List<Board> solution = algorithm.solve(board);
+                    List<Board> solution = algorithm.solve(board, heuristic);
+
                     
                     // Update statistics
                     statsLabel.setText(String.format(
-                        "Algorithm: %s\nNodes visited: %d\nExecution time: %d ms\nSolution steps: %d",
+                        "Algorithm: %s\nHeuristic: %s\nNodes visited: %d\nExecution time: %d ms\nSolution steps: %d",
                         algorithm.getName(),
+                        algorithm.getHeuristicName(),
                         algorithm.getNodesVisited(),
                         algorithm.getExecutionTime(),
                         solution.size() - 1
@@ -253,14 +288,25 @@ public class RushHourGUI extends Application {
      * @param name Algorithm name
      * @return PathfindingAlgorithm implementation
      */
-    private PathfindingAlgorithm getAlgorithmByName(String name) {
+    private PathfindingAlgorithm getAlgorithmByName(String name, Heuristic heuristic) {
         switch (name) {
             case "Greedy Best First Search":
                 // return new backend.algorithm.GreedyBestFirstSearch();
             case "Uniform Cost Search (UCS)":
                 return new backend.algorithm.UCS(); 
             case "A* Search":
-                return new backend.algorithm.AStar(); 
+                return new backend.algorithm.AStar(heuristic);
+            default:
+                return null;
+        }
+    }
+
+    private Heuristic getHeuristicByName(String name) {
+        switch (name) {
+            case "Manhattan Distance":
+                return new backend.util.HeuristicManhattan();
+            case "Blocking Cars":
+                return new backend.util.HeuristicBlocking();
             default:
                 return null;
         }

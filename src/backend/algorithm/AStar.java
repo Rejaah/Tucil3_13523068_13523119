@@ -1,16 +1,21 @@
 package backend.algorithm;
 
 import backend.model.Board;
-import backend.model.Car;
-import backend.model.Move;
+import backend.util.Heuristic;
+
 import java.util.*;
 
 public class AStar implements PathfindingAlgorithm {
+   private Heuristic heuristic; // Heuristik yang digunakan
    private int visitedNodes = 0; // Jumlah node yang dikunjungi
    private long execTime = 0; // Waktu eksekusi algoritma (ms)
    
+   public AStar(Heuristic heuristic) {
+       this.heuristic = heuristic;
+   }
+   
    @Override
-   public List<Board> solve(Board initBoard) {
+   public List<Board> solve(Board initBoard, Heuristic heuristic) {
        // 1. Inisialisasi waktu mulai untuk pengukuran performa
        long startTime = System.currentTimeMillis();
        visitedNodes = 0;
@@ -29,7 +34,7 @@ public class AStar implements PathfindingAlgorithm {
        Map<Board, Integer> gScore = new HashMap<>();
        
        // 6. Inisialisasi node awal dengan g=0 dan h=heuristik
-       ANode startNode = new ANode(initBoard, 0, heuristic(initBoard));
+       ANode startNode = new ANode(initBoard, 0, heuristic.estimate(initBoard));
        openSet.add(startNode);
        gScore.put(initBoard, 0);
        
@@ -68,7 +73,7 @@ public class AStar implements PathfindingAlgorithm {
                    gScore.put(neighbor, tentG);
                    
                    // 17. Tambahkan ke open set dengan f = g + h
-                   openSet.add(new ANode(neighbor, tentG, heuristic(neighbor)));
+                   openSet.add(new ANode(neighbor, tentG, heuristic.estimate(neighbor)));
                }
            }
        }
@@ -78,100 +83,8 @@ public class AStar implements PathfindingAlgorithm {
        return new ArrayList<>();
    }
    
-   private int heuristic(Board board) {
-       // 19. Cari primary car (mobil utama)
-       Car primCar = null;
-       for (Car car : board.getCars()) {
-           if (car.isPrimary()) {
-               primCar = car;
-               break;
-           }
-       }
-       
-       if (primCar == null) {
-           return Integer.MAX_VALUE; // State tidak valid
-       }
-       
-       // 20. Hitung jarak horizontal ke exit
-       int distToExit;
-       if (board.getExitCol() > primCar.getCol() + primCar.getLength() - 1) {
-           // Exit ada di kanan
-           distToExit = board.getExitCol() - (primCar.getCol() + primCar.getLength());
-       } else if (board.getExitCol() < primCar.getCol()) {
-           // Exit ada di kiri
-           distToExit = primCar.getCol() - board.getExitCol();
-       } else {
-           // Mobil utama sudah sejajar dengan exit
-           return 0;
-       }
-       
-       // 21. Hitung jumlah mobil yang menghalangi
-       int blockingCars = countBlocking(board, primCar);
-       
-       // 22. Heuristik gabungan: jarak + (2 × jumlah penghalang)
-       return distToExit + (2 * blockingCars);
-   }
-
-   private int countBlocking(Board board, Car primCar) {
-       int count = 0;
-       int primRow = primCar.getRow();
-       int primEndCol = primCar.getCol() + primCar.getLength() - 1;
-       int exitCol = board.getExitCol();
-       
-       // 23. Cek mobil-mobil yang menghalangi jalur horizontal ke exit
-       for (Car car : board.getCars()) {
-           if (car.isPrimary()) continue;
-           
-           // 24. Cek apakah mobil menghalangi jalur horizontal ke exit
-           if (car.isVertical() && car.getRow() <= primRow && 
-               car.getRow() + car.getLength() - 1 >= primRow) {
-               
-               // 25. Mobil berada di baris yang sama dengan mobil utama
-               if (exitCol > primEndCol && car.getCol() > primEndCol && car.getCol() <= exitCol) {
-                   // 26. Mobil menghalangi jalur ke exit di kanan
-                   count++;
-               } else if (exitCol < primCar.getCol() && car.getCol() < primCar.getCol() && car.getCol() >= exitCol) {
-                   // 27. Mobil menghalangi jalur ke exit di kiri
-                   count++;
-               }
-           }
-       }
-       
-       return count;
-   }
-   
    private boolean isGoalState(Board board) {
-       // 28. Cari mobil utama
-       Car primCar = null;
-       for (Car car : board.getCars()) {
-           if (car.isPrimary()) {
-               primCar = car;
-               break;
-           }
-       }
-       
-       if (primCar == null) {
-           return false;
-       }
-       
-       // 29. Cek apakah mobil utama bersebelahan dengan exit
-       if (primCar.isHorizontal()) {
-           // 30. Mobil horizontal bisa keluar dari samping
-           int exitCol = board.getExitCol();
-           int carEndCol = primCar.getCol() + primCar.getLength() - 1;
-           
-           // 31. Mobil berada di baris exit dan bisa bergerak ke exit
-           return primCar.getRow() == board.getExitRow() && 
-                 (primCar.getCol() == exitCol + 1 || carEndCol == exitCol - 1);
-       } else {
-           // 32. Mobil vertikal bisa keluar dari atas/bawah
-           int exitRow = board.getExitRow();
-           int carEndRow = primCar.getRow() + primCar.getLength() - 1;
-           
-           // 33. Mobil berada di kolom exit dan bisa bergerak ke exit
-           return primCar.getCol() == board.getExitCol() && 
-                 (primCar.getRow() == exitRow + 1 || carEndRow == exitRow - 1);
-       }
+       return board.isGoal();
    }
 
    private List<Board> buildPath(Map<Board, Board> prevBoard, Board current) {
@@ -202,18 +115,49 @@ public class AStar implements PathfindingAlgorithm {
    public long getExecutionTime() {
        return execTime;
    }
-   
-   private static class ANode {
+
+   @Override
+    public String getHeuristicName() {
+         return heuristic.getName();
+    }
+
+   private static class ANode implements SearchNode{
        Board board; // State board
        int g;       // Biaya dari start ke node ini
        int h;       // Perkiraan heuristik dari node ini ke goal
        int f;       // f(n) = g(n) + h(n)
        
-       ANode(Board board, int g, int h) {
+       public ANode(Board board, int g, int h) {
            this.board = board;
            this.g = g;
            this.h = h;
            this.f = g + h;
        }
+
+        @Override
+        public Board getBoard() {
+            return board;
+        }
+
+        @Override
+        public SearchNode getParent() {
+            return null;
+        }
+
+        @Override
+        public int getCost() {
+            return g;
+        }
+
+        @Override
+        public int getHeuristic() {
+            return h;
+        }
+
+        @Override
+        public int getPriority() {
+            return f;
+        }
+
    }
 }

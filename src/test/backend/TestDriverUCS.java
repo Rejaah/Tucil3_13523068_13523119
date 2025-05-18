@@ -24,7 +24,7 @@ public class TestDriverUCS {
             PathfindingAlgorithm ucs = new UCS();
 
             // Jalankan solve
-            List<Board> solutionPath = ucs.solve(initialBoard);
+            List<Board> solutionPath = ucs.solve(initialBoard, new backend.util.HeuristicManhattan());
 
             // Tampilkan hasil
             if (solutionPath.isEmpty()) {

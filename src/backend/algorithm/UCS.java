@@ -1,15 +1,15 @@
 package backend.algorithm;
 
-import java.nio.file.Path;
 import java.util.*;
 import backend.model.Board;
+import backend.util.Heuristic;
 
 public class UCS implements PathfindingAlgorithm {
     private int nodesVisited;
     private long executionTime;
 
     @Override
-    public List<Board> solve(Board initialBoard) {
+    public List<Board> solve(Board initialBoard, Heuristic heuristic) {
         nodesVisited = 0;
         long startTime = System.currentTimeMillis();
 
@@ -104,5 +104,10 @@ public class UCS implements PathfindingAlgorithm {
     @Override
     public long getExecutionTime() {
         return executionTime;
+    }
+
+    @Override
+    public String getHeuristicName() {
+        return "None";
     }
 }
