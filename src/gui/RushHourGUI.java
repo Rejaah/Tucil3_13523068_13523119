@@ -1,36 +1,34 @@
 package gui;
 
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
+import javafx.application.*;
+import javafx.geometry.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import java.io.File;
-import java.nio.file.Path;
-import java.util.List;
-import backend.model.Board;
-import backend.exception.ParserException;
-import backend.model.Parser;
-import backend.util.Heuristic;
-import backend.algorithm.PathfindingAlgorithm;
+import javafx.stage.*;
 
-/**
- * Main JavaFX application for Rush Hour Puzzle Solver.
- */
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+
+import backend.model.*;
+import backend.util.*;
+import backend.exception.*;
+import backend.algorithm.*;
+
 public class RushHourGUI extends Application {
     private BoardView boardView;
     private File selectedFile;
     private Board board;
     private Label fileNameLabel;
     private Button runButton;
+    private Button saveButton;
     private ComboBox<String> algorithmCombo;
+    private ComboBox<String> heuristicCombo;
     private Label statsLabel;
     private HBox animationControls;
+    private List<Board> solution;
+    private PathfindingAlgorithm lastAlgorithm;
     
     @Override
     public void start(Stage primaryStage) {
@@ -95,7 +93,7 @@ public class RushHourGUI extends Application {
 
         // Heuristic selection
         Label heuristicLabel = new Label("Select Heuristic:");
-        ComboBox<String> heuristicCombo = new ComboBox<>();
+        heuristicCombo = new ComboBox<>();
         heuristicCombo.getItems().addAll(
             "Manhattan Distance", 
             "Blocking Cars"
@@ -111,13 +109,18 @@ public class RushHourGUI extends Application {
                 heuristicCombo.setDisable(false); // Enable heuristic selection
             }
         });
-
         
         // Run button
         runButton = new Button("Run Solver");
         runButton.setStyle("-fx-background-color: #4285f4; -fx-text-fill: white; -fx-font-weight: bold;");
         runButton.setPrefWidth(200);
         runButton.setDisable(true);
+        
+        // Save button
+        saveButton = new Button("Save Solution");
+        saveButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
+        saveButton.setPrefWidth(200);
+        saveButton.setDisable(true);
         
         // Statistics section
         statsLabel = new Label("No data");
@@ -140,6 +143,7 @@ public class RushHourGUI extends Application {
             heuristicLabel,
             heuristicCombo,
             runButton,
+            saveButton,
             new Separator(),
             statsBox
         );
@@ -166,6 +170,9 @@ public class RushHourGUI extends Application {
                     
                     // Enable run button
                     runButton.setDisable(false);
+                    
+                    // Disable save button until solution is found
+                    saveButton.setDisable(true);
                     
                     // Reset statistics
                     statsLabel.setText("Ready to solve");
@@ -203,8 +210,8 @@ public class RushHourGUI extends Application {
                     statsLabel.setText("Running algorithm...");
                     
                     // Run the algorithm
-                    List<Board> solution = algorithm.solve(board, heuristic);
-
+                    solution = algorithm.solve(board, heuristic);
+                    lastAlgorithm = algorithm;
                     
                     // Update statistics
                     statsLabel.setText(String.format(
@@ -224,6 +231,9 @@ public class RushHourGUI extends Application {
                     
                     // Visualize solution
                     boardView.setSolution(solution);
+                    
+                    // Enable save button
+                    saveButton.setDisable(false);
                 } catch (Exception ex) {
                     // Show error
                     statsLabel.setText("Error: " + ex.getMessage());
@@ -231,6 +241,61 @@ public class RushHourGUI extends Application {
                 }
             } else {
                 showError("Algorithm Error", "Invalid algorithm selected", "Please select a valid algorithm");
+            }
+        });
+        
+        // Save button event handler
+        saveButton.setOnAction(e -> {
+            if (board == null || solution == null || solution.isEmpty()) {
+                showError("Save Error", "Nothing to save", "You need to find a solution first before saving.");
+                return;
+            }
+
+            // Create file chooser
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Solution");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Text Files", "*.txt")
+            );
+            fileChooser.setInitialFileName("rush_hour_solution.txt");
+            
+            // Show save dialog
+            File saveFile = fileChooser.showSaveDialog(stage);
+            
+            if (saveFile != null) {
+                try {
+                    // Get algorithm and heuristic info
+                    String algorithmName = algorithmCombo.getValue();
+                    String heuristicName = "None";
+                    if (!"Uniform Cost Search (UCS)".equals(algorithmName)) {
+                        heuristicName = heuristicCombo.getValue();
+                    }
+                    
+                    // Get performance metrics from the last run
+                    int nodesVisited = lastAlgorithm != null ? lastAlgorithm.getNodesVisited() : 0;
+                    long executionTime = lastAlgorithm != null ? lastAlgorithm.getExecutionTime() : 0;
+                    
+                    // Call export method
+                    boolean success = exportSolution(
+                        solution, 
+                        algorithmName, 
+                        heuristicName, 
+                        nodesVisited, 
+                        executionTime, 
+                        saveFile
+                    );
+                    
+                    if (success) {
+                        // Show success message
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Save Successful");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Solution saved successfully to: " + saveFile.getPath());
+                        alert.showAndWait();
+                    }
+                } catch (Exception ex) {
+                    showError("Save Error", "Error saving solution", ex.getMessage());
+                }
             }
         });
         
@@ -283,11 +348,73 @@ public class RushHourGUI extends Application {
         return controls;
     }
     
-    /**
-     * Gets the appropriate algorithm implementation based on name.
-     * @param name Algorithm name
-     * @return PathfindingAlgorithm implementation
-     */
+    private boolean exportSolution(List<Board> solution, String algorithm, String heuristic, 
+                                  int nodesVisited, long executionTime, File outputFile) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+            // Write header information
+            writer.write("Algoritma: " + algorithm + "\n");
+            writer.write("Heuristik: " + heuristic + "\n");
+            writer.write("Nodes dikunjungi: " + nodesVisited + "\n");
+            writer.write("Waktu eksekusi: " + executionTime + " ms\n\n");
+            
+            // Write initial state
+            writer.write("Papan Awal\n");
+            writer.write(boardToString(solution.get(0)) + "\n");
+            
+            // Write each move and resulting state
+            for (int i = 1; i < solution.size(); i++) {
+                Board prevBoard = solution.get(i-1);
+                Board currBoard = solution.get(i);
+                
+                // Identify which piece moved and in what direction
+                String moveInfo = identifyMove(prevBoard, currBoard);
+                writer.write("Gerakan " + i + ": " + moveInfo + "\n");
+                writer.write(boardToString(currBoard) + "\n");
+            }
+            
+            return true;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    private String boardToString(Board board) {
+        return board.toString();
+    }
+
+    private String identifyMove(Board prevBoard, Board currBoard) {
+        // Compare car positions in both boards to determine which car moved
+        for (Car car : prevBoard.getCars()) {
+            Car currCar = findCarById(currBoard, car.getId());
+            
+            if (currCar != null) {
+                // Check if this car moved
+                if (car.getRow() != currCar.getRow() || car.getCol() != currCar.getCol()) {
+                    // Determine direction
+                    String direction;
+                    if (car.isHorizontal()) {
+                        direction = currCar.getCol() > car.getCol() ? "kanan" : "kiri";
+                    } else {
+                        direction = currCar.getRow() > car.getRow() ? "bawah" : "atas";
+                    }
+                    return car.getId() + "-" + direction;
+                }
+            }
+        }
+        
+        return "unknown-unknown"; // Fallback if we can't determine the move
+    }
+
+    private Car findCarById(Board board, char id) {
+        for (Car car : board.getCars()) {
+            if (car.getId() == id) {
+                return car;
+            }
+        }
+        return null;
+    }
+    
     private PathfindingAlgorithm getAlgorithmByName(String name, Heuristic heuristic) {
         switch (name) {
             case "Greedy Best First Search":
@@ -312,9 +439,6 @@ public class RushHourGUI extends Application {
         }
     }
     
-    /**
-     * Enables animation controls after a solution is found.
-     */
     private void enableAnimationControls() {
         // Find controls by ID
         Button prevButton = findNodeById(animationControls, "prevButton");
@@ -348,11 +472,7 @@ public class RushHourGUI extends Application {
             slider.setDisable(false);
         }
     }
-    
-    /**
-     * Configures the slider for navigating through solution steps.
-     * @param solutionSize Number of states in the solution
-     */
+
     private void setupSlider(int solutionSize) {
         Slider slider = findNodeById(animationControls, "stepSlider");
         
@@ -378,12 +498,7 @@ public class RushHourGUI extends Application {
         }
     }
     
-    /**
-     * Helper method to find a node by ID in a parent.
-     * @param parent Parent node
-     * @param id Node ID to find
-     * @return The node if found, null otherwise
-     */
+
     @SuppressWarnings("unchecked")
     private <T extends Node> T findNodeById(Parent parent, String id) {
         for (Node node : parent.getChildrenUnmodifiable()) {
@@ -394,12 +509,6 @@ public class RushHourGUI extends Application {
         return null;
     }
     
-    /**
-     * Shows an error dialog.
-     * @param title Dialog title
-     * @param header Header text
-     * @param content Content text
-     */
     private void showError(String title, String header, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
