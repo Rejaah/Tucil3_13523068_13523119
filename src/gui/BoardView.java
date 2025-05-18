@@ -19,7 +19,7 @@ import java.util.Map;
  * View component for rendering the Rush Hour board.
  */
 public class BoardView extends Pane {
-    private double cellSize = 60.0;
+    private double cellSize = 60.0; // Default cell size
     private Map<Character, Rectangle> carRectangles = new HashMap<>();
     private Board currentBoard;
     private List<Board> solution;
@@ -36,9 +36,21 @@ public class BoardView extends Pane {
         this.getChildren().clear();
         carRectangles.clear();
         
-        // Set view size based on board dimensions
+        // Set view size based on board dimensions with dynamic cell sizing
         int rows = board.getRows();
         int cols = board.getCols();
+        
+        // Calculate appropriate cell size based on board dimensions
+        // The goal is to fit the board within reasonable dimensions
+        double maxDesiredWidth = 800.0;  // Maximum desired board width
+        double maxDesiredHeight = 600.0; // Maximum desired board height
+        
+        double suggestedCellSize = Math.min(maxDesiredWidth / cols, maxDesiredHeight / rows);
+        
+        // Enforce minimum cell size for usability
+        this.cellSize = Math.max(suggestedCellSize, 20.0);
+        
+        // Set the preferred size of the board view
         setPrefSize(cols * cellSize, rows * cellSize);
         
         // Draw board grid
@@ -318,14 +330,24 @@ public class BoardView extends Pane {
     }
     
     private Car findMovedCar(Board board1, Board board2) {
-        // This is a placeholder - implement based on your Board/Car classes
-        // Should return the car that changed position between board1 and board2
+        // Compare all cars between the two boards to find the one that moved
+        for (Car car1 : board1.getCars()) {
+            Car car2 = findCarById(board2, car1.getId());
+            if (car2 != null) {
+                if (car1.getRow() != car2.getRow() || car1.getCol() != car2.getCol()) {
+                    return car1;
+                }
+            }
+        }
         return null;
     }
     
     private Car findCarById(Board board, char id) {
-        // This is a placeholder - implement based on your Board/Car classes
-        // Should return the car with the given ID from the board
+        for (Car car : board.getCars()) {
+            if (car.getId() == id) {
+                return car;
+            }
+        }
         return null;
     }
     
@@ -342,85 +364,4 @@ public class BoardView extends Pane {
             }
         }
     }
-    
-    /**
-     * Create a sample board for demonstration purposes.
-     * Used when no file is loaded yet.
-     */
-    // public void createSampleBoard() {
-    //     this.getChildren().clear();
-        
-    //     // Sample board dimensions
-    //     int rows = 6;
-    //     int cols = 6;
-        
-    //     // Set view size
-    //     setPrefSize(cols * cellSize, rows * cellSize);
-        
-    //     // Draw grid
-    //     drawGrid(rows, cols);
-        
-    //     // Draw an exit marker at the right edge, third row (for demonstration)
-    //     Rectangle exit = new Rectangle(
-    //         cols * cellSize - 5,
-    //         2 * cellSize,
-    //         10,
-    //         cellSize
-    //     );
-    //     exit.setFill(Color.LIGHTGREEN);
-    //     exit.setOpacity(0.7);
-    //     this.getChildren().add(exit);
-        
-    //     // Add exit label
-    //     javafx.scene.text.Text exitLabel = new javafx.scene.text.Text("EXIT");
-    //     exitLabel.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, 10));
-    //     exitLabel.setX(cols * cellSize + 10);
-    //     exitLabel.setY(2 * cellSize + cellSize/2);
-    //     this.getChildren().add(exitLabel);
-        
-    //     // Draw some sample cars
-        
-    //     // Primary car (horizontal at position 2,2 with length 2)
-    //     Rectangle primaryCar = new Rectangle(
-    //         2 * cellSize + 2,
-    //         2 * cellSize + 2,
-    //         2 * cellSize - 4,
-    //         cellSize - 4
-    //     );
-    //     primaryCar.setFill(Color.RED);
-    //     primaryCar.setStroke(Color.DARKRED);
-    //     primaryCar.setStrokeWidth(1.5);
-    //     primaryCar.setArcWidth(10);
-    //     primaryCar.setArcHeight(10);
-    //     this.getChildren().add(primaryCar);
-        
-    //     // Add a few more sample cars with different colors
-    //     // Vertical car (at position 0,0 with length 3)
-    //     Rectangle verticalCar = new Rectangle(
-    //         0 * cellSize + 2,
-    //         0 * cellSize + 2,
-    //         cellSize - 4,
-    //         3 * cellSize - 4
-    //     );
-    //     verticalCar.setFill(Color.BLUE);
-    //     verticalCar.setStroke(Color.BLACK);
-    //     verticalCar.setStrokeWidth(1.5);
-    //     verticalCar.setArcWidth(10);
-    //     verticalCar.setArcHeight(10);
-    //     this.getChildren().add(verticalCar);
-        
-    //     // Horizontal car (at position 0,3 with length 2)
-    //     Rectangle horizontalCar = new Rectangle(
-    //         0 * cellSize + 2,
-    //         3 * cellSize + 2,
-    //         2 * cellSize - 4,
-    //         cellSize - 4
-    //     );
-    //     horizontalCar.setFill(Color.GREEN);
-    //     horizontalCar.setStroke(Color.BLACK);
-    //     horizontalCar.setStrokeWidth(1.5);
-    //     horizontalCar.setArcWidth(10);
-    //     horizontalCar.setArcHeight(10);
-    //     this.getChildren().add(horizontalCar);
-    // }
 }

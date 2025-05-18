@@ -40,11 +40,16 @@ public class RushHourGUI extends Application {
         
         // Center panel with board
         boardView = new BoardView();
-        boardView.setPrefSize(500, 500);
+        boardView.setPrefSize(600, 600);
         boardView.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;");
         
+        // Wrap boardView in ScrollPane to handle large boards
+        ScrollPane scrollPane = new ScrollPane(boardView);
+        scrollPane.setPrefSize(700, 800);
+        scrollPane.setPannable(true); 
+        
         // Add some padding around the board
-        StackPane centerWrapper = new StackPane(boardView);
+        StackPane centerWrapper = new StackPane(scrollPane);
         centerWrapper.setPadding(new Insets(20));
         
         // Add controls below the board
@@ -385,20 +390,19 @@ public class RushHourGUI extends Application {
 
     private String identifyMove(Board prevBoard, Board currBoard) {
         // Compare car positions in both boards to determine which car moved
-        for (Car car : prevBoard.getCars()) {
-            Car currCar = findCarById(currBoard, car.getId());
-            
-            if (currCar != null) {
+        for (Car car1 : prevBoard.getCars()) {
+            Car car2 = findCarById(currBoard, car1.getId());
+            if (car2 != null) {
                 // Check if this car moved
-                if (car.getRow() != currCar.getRow() || car.getCol() != currCar.getCol()) {
+                if (car1.getRow() != car2.getRow() || car1.getCol() != car2.getCol()) {
                     // Determine direction
                     String direction;
-                    if (car.isHorizontal()) {
-                        direction = currCar.getCol() > car.getCol() ? "kanan" : "kiri";
+                    if (car1.isHorizontal()) {
+                        direction = car2.getCol() > car1.getCol() ? "kanan" : "kiri";
                     } else {
-                        direction = currCar.getRow() > car.getRow() ? "bawah" : "atas";
+                        direction = car2.getRow() > car1.getRow() ? "bawah" : "atas";
                     }
-                    return car.getId() + "-" + direction;
+                    return car1.getId() + "-" + direction;
                 }
             }
         }
@@ -498,7 +502,6 @@ public class RushHourGUI extends Application {
         }
     }
     
-
     @SuppressWarnings("unchecked")
     private <T extends Node> T findNodeById(Parent parent, String id) {
         for (Node node : parent.getChildrenUnmodifiable()) {
