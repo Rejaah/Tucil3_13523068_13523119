@@ -5,9 +5,6 @@ import backend.model.Car;
 import backend.model.Move;
 import java.util.*;
 
-/**
-* Implementasi algoritma A* Search untuk puzzle Rush Hour.
-*/
 public class AStar implements PathfindingAlgorithm {
    private int visitedNodes = 0; // Jumlah node yang dikunjungi
    private long execTime = 0; // Waktu eksekusi algoritma (ms)
@@ -81,12 +78,6 @@ public class AStar implements PathfindingAlgorithm {
        return new ArrayList<>();
    }
    
-   /**
-    * Fungsi heuristik A*.
-    * Memperkirakan biaya dari state saat ini ke goal.
-    * @param board State board saat ini
-    * @return Nilai heuristik
-    */
    private int heuristic(Board board) {
        // 19. Cari primary car (mobil utama)
        Car primCar = null;
@@ -120,13 +111,7 @@ public class AStar implements PathfindingAlgorithm {
        // 22. Heuristik gabungan: jarak + (2 × jumlah penghalang)
        return distToExit + (2 * blockingCars);
    }
-   
-   /**
-    * Menghitung jumlah mobil yang menghalangi jalur primary car ke exit.
-    * @param board State board saat ini
-    * @param primCar Mobil utama
-    * @return Jumlah mobil penghalang
-    */
+
    private int countBlocking(Board board, Car primCar) {
        int count = 0;
        int primRow = primCar.getRow();
@@ -155,11 +140,6 @@ public class AStar implements PathfindingAlgorithm {
        return count;
    }
    
-   /**
-    * Memeriksa apakah board dalam goal state (primary car bisa keluar).
-    * @param board Board untuk diperiksa
-    * @return true jika goal state, false jika tidak
-    */
    private boolean isGoalState(Board board) {
        // 28. Cari mobil utama
        Car primCar = null;
@@ -193,13 +173,7 @@ public class AStar implements PathfindingAlgorithm {
                  (primCar.getRow() == exitRow + 1 || carEndRow == exitRow - 1);
        }
    }
-   
-   /**
-    * Merekonstruksi jalur dari start ke goal.
-    * @param prevBoard Map tracking dari mana kita mencapai setiap state
-    * @param current Goal state
-    * @return Jalur dari start ke goal
-    */
+
    private List<Board> buildPath(Map<Board, Board> prevBoard, Board current) {
        // 34. Inisialisasi path dengan goal
        List<Board> path = new ArrayList<>();
@@ -229,10 +203,6 @@ public class AStar implements PathfindingAlgorithm {
        return execTime;
    }
    
-   /**
-    * Kelas node untuk algoritma A*.
-    * ANode = Node untuk algoritma A*
-    */
    private static class ANode {
        Board board; // State board
        int g;       // Biaya dari start ke node ini
