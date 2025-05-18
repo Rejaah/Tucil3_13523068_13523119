@@ -158,9 +158,16 @@ public class Parser {
                 char id = e.getKey();
                 List<int[]> coords = e.getValue();
                 int length = coords.size();
+                
+                // 1x1 mobil tidak valid karena tidak memiliki arah
+                if (length == 1) {
+                    throw new InvalidInputException("Mobil dengan ukuran 1x1 tidak diperbolehkan.");
+                }
+
                 int minR = coords.stream().mapToInt(p -> p[0]).min().getAsInt();
                 int minC = coords.stream().mapToInt(p -> p[1]).min().getAsInt();
                 boolean horiz = coords.stream().allMatch(p -> p[0] == minR);
+                
                 cars.add(new Car(id, horiz, length, minR, minC));
             }
             
@@ -168,6 +175,27 @@ public class Parser {
                 throw new InvalidInputException(
                     "Jumlah mobil terdeteksi (" + cars.size() +
                     ") tidak sesuai deklarasi (" + declaredCars + ")");
+            }
+            
+            // 8.5) Validasi exit sejajar dengan mobil player (P)
+            Car playerCar = cars.stream()
+                .filter(car -> car.getId() == 'P')
+                .findFirst()
+                .orElseThrow(() -> new InvalidInputException("Mobil pemain (P) tidak ditemukan"));
+
+            boolean exitAligned = false;
+            if (playerCar.isHorizontal()) {
+                int playerRow = playerCar.getRow();
+                exitAligned = (exitRow == playerRow);
+            } else {
+                int playerCol = playerCar.getCol();
+                exitAligned = (exitCol == playerCol);
+            }
+
+            if (!exitAligned) {
+                throw new InvalidInputException(
+                    "Pintu keluar (K) harus sejajar dengan mobil pemain (P): " +
+                    (playerCar.isHorizontal() ? "horizontal" : "vertikal"));
             }
 
             // 9) Generate Zobrist & kembalikan Board
