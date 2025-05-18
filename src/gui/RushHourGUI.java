@@ -260,7 +260,7 @@ public class RushHourGUI extends Application {
             case "Uniform Cost Search (UCS)":
                 return new backend.algorithm.UCS(); 
             case "A* Search":
-                // return new backend.algorithm.AStar(); 
+                return new backend.algorithm.AStar(); 
             default:
                 return null;
         }
