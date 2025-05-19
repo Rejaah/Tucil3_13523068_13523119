@@ -1,4 +1,4 @@
-package test.model;
+package driver.model;
 
 import backend.model.Board;
 // import backend.model.Car;

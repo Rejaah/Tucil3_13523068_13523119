@@ -1,4 +1,4 @@
-package test.backend;
+package driver.backend;
 
 import backend.algorithm.UCS;
 import backend.algorithm.PathfindingAlgorithm;
