@@ -2,7 +2,9 @@
 
 Program ini menyelesaikan permainan puzzle **Rush Hour** menggunakan beberapa algoritma pathfinding, yakni A\* Search, Uniform Cost Search (UCS), dan Greedy Best First Search. Dilengkapi dengan GUI interaktif dan animasi solusi.
 
-![Demo](img/test1.gif)
+<p align="center">
+  <img src="img/test1.gif" alt="Demo" />
+</p>
 
 ---
 
