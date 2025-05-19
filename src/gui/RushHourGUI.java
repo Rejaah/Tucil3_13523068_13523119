@@ -8,7 +8,6 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 
 import backend.model.*;
@@ -40,13 +39,11 @@ public class RushHourGUI extends Application {
         
         // Center panel with board
         boardView = new BoardView();
-        boardView.setPrefSize(600, 600);
-        boardView.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;");
         
         // Wrap boardView in ScrollPane to handle large boards
         ScrollPane scrollPane = new ScrollPane(boardView);
-        scrollPane.setPrefSize(700, 800);
-        scrollPane.setPannable(true); 
+        scrollPane.setPrefSize(500, 500);
+        scrollPane.setPannable(true); // Allow panning with mouse
         
         // Add some padding around the board
         StackPane centerWrapper = new StackPane(scrollPane);

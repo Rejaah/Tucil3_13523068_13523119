@@ -19,7 +19,8 @@ import java.util.Map;
  * View component for rendering the Rush Hour board.
  */
 public class BoardView extends Pane {
-    private double cellSize = 60.0; // Default cell size
+    // Original cell size (60.0) may be too large for big boards
+    private double cellSize = 30.0; // Reduced default cell size
     private Map<Character, Rectangle> carRectangles = new HashMap<>();
     private Board currentBoard;
     private List<Board> solution;
@@ -36,21 +37,17 @@ public class BoardView extends Pane {
         this.getChildren().clear();
         carRectangles.clear();
         
-        // Set view size based on board dimensions with dynamic cell sizing
+        // Set view size based on board dimensions
         int rows = board.getRows();
         int cols = board.getCols();
         
-        // Calculate appropriate cell size based on board dimensions
-        // The goal is to fit the board within reasonable dimensions
-        double maxDesiredWidth = 800.0;  // Maximum desired board width
-        double maxDesiredHeight = 600.0; // Maximum desired board height
+        // Adjust cell size if board is very large
+        if (rows > 10 || cols > 10) {
+            cellSize = Math.min(20.0, 600.0 / Math.max(rows, cols));
+        } else {
+            cellSize = 40.0; // Normal size for standard boards
+        }
         
-        double suggestedCellSize = Math.min(maxDesiredWidth / cols, maxDesiredHeight / rows);
-        
-        // Enforce minimum cell size for usability
-        this.cellSize = Math.max(suggestedCellSize, 20.0);
-        
-        // Set the preferred size of the board view
         setPrefSize(cols * cellSize, rows * cellSize);
         
         // Draw board grid
@@ -83,7 +80,7 @@ public class BoardView extends Pane {
     public void nextStep() {
         if (solution != null && currentStep.get() < solution.size() - 1) {
             currentStep.set(currentStep.get() + 1);
-            animateMove(solution.get(currentStep.get() - 1), solution.get(currentStep.get()));
+            updateBoardState(solution.get(currentStep.get()));
         }
     }
     
@@ -93,7 +90,7 @@ public class BoardView extends Pane {
     public void previousStep() {
         if (solution != null && currentStep.get() > 0) {
             currentStep.set(currentStep.get() - 1);
-            animateMove(solution.get(currentStep.get() + 1), solution.get(currentStep.get()));
+            updateBoardState(solution.get(currentStep.get()));
         }
     }
     
@@ -103,16 +100,8 @@ public class BoardView extends Pane {
      */
     public void goToStep(int step) {
         if (solution != null && step >= 0 && step < solution.size() && step != currentStep.get()) {
-            int oldStep = currentStep.get();
             currentStep.set(step);
-            
-            // If the difference is 1, animate the transition
-            if (Math.abs(oldStep - step) == 1) {
-                animateMove(solution.get(oldStep), solution.get(step));
-            } else {
-                // Otherwise, just update the board state directly
-                updateBoardState(solution.get(step));
-            }
+            updateBoardState(solution.get(step));
         }
     }
     
@@ -282,6 +271,22 @@ public class BoardView extends Pane {
         rect.setArcHeight(10);
         rect.setStrokeWidth(1.5);
         
+        // Add car ID text
+        javafx.scene.text.Text idText = new javafx.scene.text.Text(String.valueOf(car.getId()));
+        idText.setFill(Color.WHITE);
+        idText.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, cellSize/3));
+        
+        // Position text in center of car
+        if (isVertical) {
+            idText.setX(car.getCol() * cellSize + cellSize/2 - 5);
+            idText.setY(car.getRow() * cellSize + height/2 + 5);
+        } else {
+            idText.setX(car.getCol() * cellSize + width/2 - 5);
+            idText.setY(car.getRow() * cellSize + cellSize/2 + 5);
+        }
+        
+        this.getChildren().add(idText);
+        
         return rect;
     }
     
@@ -296,72 +301,29 @@ public class BoardView extends Pane {
         );
     }
     
-    private void animateMove(Board fromBoard, Board toBoard) {
-        // Find the car that moved
-        Car movedCar = findMovedCar(fromBoard, toBoard);
-        
-        if (movedCar != null) {
-            // Get the rectangle for this car
-            Rectangle carRect = carRectangles.get(movedCar.getId());
-            
-            // Calculate the difference in position
-            Car carInNewState = findCarById(toBoard, movedCar.getId());
-            
-            if (carRect != null && carInNewState != null) {
-                double fromX = movedCar.getCol() * cellSize + 2;
-                double fromY = movedCar.getRow() * cellSize + 2;
-                double toX = carInNewState.getCol() * cellSize + 2;
-                double toY = carInNewState.getRow() * cellSize + 2;
-                
-                // Create animation
-                TranslateTransition transition = new TranslateTransition(Duration.millis(300), carRect);
-                transition.setFromX(carRect.getTranslateX());
-                transition.setFromY(carRect.getTranslateY());
-                transition.setToX(toX - fromX);
-                transition.setToY(toY - fromY);
-                
-                // Play animation
-                transition.play();
-            }
-        } else {
-            // If we couldn't determine which car moved, just update board state
-            updateBoardState(toBoard);
-        }
-    }
-    
-    private Car findMovedCar(Board board1, Board board2) {
-        // Compare all cars between the two boards to find the one that moved
-        for (Car car1 : board1.getCars()) {
-            Car car2 = findCarById(board2, car1.getId());
-            if (car2 != null) {
-                if (car1.getRow() != car2.getRow() || car1.getCol() != car2.getCol()) {
-                    return car1;
-                }
-            }
-        }
-        return null;
-    }
-    
-    private Car findCarById(Board board, char id) {
-        for (Car car : board.getCars()) {
-            if (car.getId() == id) {
-                return car;
-            }
-        }
-        return null;
-    }
-    
     private void updateBoardState(Board board) {
-        // Update all car positions based on the new board state
+        // Clear the view
+        this.getChildren().clear();
+        carRectangles.clear();
+        
+        // Update current board reference
+        this.currentBoard = board;
+        
+        // Redraw everything
+        int rows = board.getRows();
+        int cols = board.getCols();
+        
+        // Draw grid first
+        drawGrid(rows, cols);
+        
+        // Draw exit marker
+        drawExitMarker(board);
+        
+        // Draw cars
         for (Car car : board.getCars()) {
-            Rectangle rect = carRectangles.get(car.getId());
-            
-            if (rect != null) {
-                rect.setTranslateX(0);
-                rect.setTranslateY(0);
-                rect.setX(car.getCol() * cellSize + 2);
-                rect.setY(car.getRow() * cellSize + 2);
-            }
+            Rectangle rect = createCarRectangle(car);
+            carRectangles.put(car.getId(), rect);
+            this.getChildren().add(rect);
         }
     }
 }
