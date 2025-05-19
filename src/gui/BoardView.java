@@ -36,33 +36,32 @@ public class BoardView extends Pane {
         this.currentBoard = board;
         this.getChildren().clear();
         carRectangles.clear();
-        
-        // Set view size based on board dimensions
+    
         int rows = board.getRows();
         int cols = board.getCols();
-        
-        // Adjust cell size if board is very large
+    
         if (rows > 10 || cols > 10) {
-            cellSize = Math.min(20.0, 600.0 / Math.max(rows, cols));
+            cellSize = Math.min(40.0, 600.0 / Math.max(rows, cols));
         } else {
-            cellSize = 40.0; // Normal size for standard boards
+            cellSize = 60.0;
         }
-        
-        setPrefSize(cols * cellSize, rows * cellSize);
-        
-        // Draw board grid
+    
+        double width = cols * cellSize;
+        double height = rows * cellSize;
+    
+        setMinSize(width, height);
+        setPrefSize(width, height);
+        setMaxSize(width, height);
+    
         drawGrid(rows, cols);
-        
-        // Draw exit marker
         drawExitMarker(board);
-        
-        // Draw cars
+    
         for (Car car : board.getCars()) {
             Rectangle rect = createCarRectangle(car);
             carRectangles.put(car.getId(), rect);
             this.getChildren().add(rect);
         }
-    }
+    }    
     
     /**
      * Set the solution path for animation.
