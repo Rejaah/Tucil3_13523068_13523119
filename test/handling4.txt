@@ -1,0 +1,7 @@
+5 3
+5
+AAA
+BBB
+CCC
+DDJ
+PPJK
