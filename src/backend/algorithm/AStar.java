@@ -6,9 +6,9 @@ import backend.util.Heuristic;
 import java.util.*;
 
 public class AStar implements PathfindingAlgorithm {
-   private Heuristic heuristic; // Heuristik yang digunakan
-   private int visitedNodes = 0; // Jumlah node yang dikunjungi
-   private long execTime = 0; // Waktu eksekusi algoritma (ms)
+   private Heuristic heuristic; 
+   private int visitedNodes = 0; 
+   private long execTime = 0; 
    
    public AStar(Heuristic heuristic) {
        this.heuristic = heuristic;
@@ -95,7 +95,7 @@ public class AStar implements PathfindingAlgorithm {
        // 35. Rekonstruksi jalur dari goal ke start
        while (prevBoard.containsKey(current)) {
            current = prevBoard.get(current);
-           path.add(0, current); // Tambahkan di awal list
+           path.add(0, current); 
        }
        
        return path;
@@ -122,7 +122,7 @@ public class AStar implements PathfindingAlgorithm {
     }
 
    private static class ANode implements SearchNode{
-       Board board; // State board
+       Board board; 
        int g;       // Biaya dari start ke node ini
        int h;       // Perkiraan heuristik dari node ini ke goal
        int f;       // f(n) = g(n) + h(n)
