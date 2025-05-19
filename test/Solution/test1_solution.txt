@@ -1,9 +1,9 @@
-Algoritma: A* Search
-Heuristik: Manhattan Distance
-Nodes dikunjungi: 97
-Waktu eksekusi: 34 ms
+Algorithm: A* Search
+Heuristic: Manhattan Distance
+Nodes visited: 97
+Execution time: 15 ms
 
-Papan Awal
+Papan Awal:
 A A B . . F 
 . . B C D F 
 G P P C D F 
@@ -11,7 +11,7 @@ G H . I I I
 G H J . . . 
 L L J M M . 
 
-Gerakan 1: I-kiri
+Gerakan 1: I - Kiri
 A A B . . F 
 . . B C D F 
 G P P C D F 
@@ -19,7 +19,7 @@ G H I I I .
 G H J . . . 
 L L J M M . 
 
-Gerakan 2: F-bawah
+Gerakan 2: F - Bawah
 A A B . . . 
 . . B C D . 
 G P P C D . 
@@ -27,7 +27,7 @@ G H I I I F
 G H J . . F 
 L L J M M F 
 
-Gerakan 3: C-atas
+Gerakan 3: C - Atas
 A A B C . . 
 . . B C D . 
 G P P . D . 
@@ -35,7 +35,7 @@ G H I I I F
 G H J . . F 
 L L J M M F 
 
-Gerakan 4: D-atas
+Gerakan 4: D - Atas
 A A B C D . 
 . . B C D . 
 G P P . . . 
@@ -43,7 +43,7 @@ G H I I I F
 G H J . . F 
 L L J M M F 
 
-Gerakan 5: P-kanan
+Gerakan 5: P - Kanan
 A A B C D . 
 . . B C D . 
 G . . . P P 
