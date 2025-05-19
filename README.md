@@ -97,7 +97,7 @@ Ganti `<path-to-javafx>` dengan direktori instalasi JavaFX Anda jika diperlukan.
 
 ---
 
-### Menggunakan IDE
+### 🧑‍💻 Menggunakan IDE
 
 1. Impor proyek ke IDE pilihan Anda (Eclipse, IntelliJ IDEA, atau NetBeans)
 2. Konfigurasikan IDE untuk menggunakan JavaFX
