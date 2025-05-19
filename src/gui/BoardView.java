@@ -291,12 +291,12 @@ public class BoardView extends Pane {
     
     private Color generateColorForCar(char id) {
         // Generate a unique color for each car based on its ID
-        int hash = id * 83;
+        int hash = id * 91;
         
         return Color.rgb(
-            (hash * 123) % 200 + 55,  // R
-            (hash * 47) % 200 + 55,   // G
-            (hash * 29) % 200 + 55    // B
+            (hash * 123) % 200 + 57,  // R
+            (hash * 47) % 200 + 59,   // G
+            (hash * 29) % 200 + 53    // B
         );
     }
     

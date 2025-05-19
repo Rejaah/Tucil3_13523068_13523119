@@ -1,0 +1,157 @@
+Algoritma: A* Search
+Heuristik: Manhattan Distance
+Nodes dikunjungi: 835
+Waktu eksekusi: 14 ms
+
+Papan Awal
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X Y C C C H 
+X Y I . . H 
+R R I . . . 
+
+Gerakan 1: H-bawah
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X Y C C C . 
+X Y I . . H 
+R R I . . H 
+
+Gerakan 2: C-kanan
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X Y . C C C 
+X Y I . . H 
+R R I . . H 
+
+Gerakan 3: I-atas
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X Y I C C C 
+X Y I . . H 
+R R . . . H 
+
+Gerakan 4: R-kanan
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X Y I C C C 
+X Y I . . H 
+. . . R R H 
+
+Gerakan 5: Y-bawah
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X . I C C C 
+X Y I . . H 
+. Y . R R H 
+
+Gerakan 6: I-bawah
+. A A B E E 
+. . D B F G 
+P P D B F G 
+X . . C C C 
+X Y I . . H 
+. Y I R R H 
+
+Gerakan 7: X-bawah
+. A A B E E 
+. . D B F G 
+P P D B F G 
+. . . C C C 
+X Y I . . H 
+X Y I R R H 
+
+Gerakan 8: C-kiri
+. A A B E E 
+. . D B F G 
+P P D B F G 
+C C C . . . 
+X Y I . . H 
+X Y I R R H 
+
+Gerakan 9: A-kiri
+A A . B E E 
+. . D B F G 
+P P D B F G 
+C C C . . . 
+X Y I . . H 
+X Y I R R H 
+
+Gerakan 10: H-atas
+A A . B E E 
+. . D B F G 
+P P D B F G 
+C C C . . H 
+X Y I . . H 
+X Y I R R . 
+
+Gerakan 11: R-kanan
+A A . B E E 
+. . D B F G 
+P P D B F G 
+C C C . . H 
+X Y I . . H 
+X Y I . R R 
+
+Gerakan 12: B-bawah
+A A . . E E 
+. . D . F G 
+P P D . F G 
+C C C B . H 
+X Y I B . H 
+X Y I B R R 
+
+Gerakan 13: F-bawah
+A A . . E E 
+. . D . . G 
+P P D . . G 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+
+Gerakan 14: D-atas
+A A D . E E 
+. . D . . G 
+P P . . . G 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+
+Gerakan 15: P-kanan
+A A D . E E 
+. . D . . G 
+. . P P . G 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+
+Gerakan 16: E-kiri
+A A D E E . 
+. . D . . G 
+. . P P . G 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+
+Gerakan 17: G-atas
+A A D E E G 
+. . D . . G 
+. . P P . . 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+
+Gerakan 18: P-kanan
+A A D E E G 
+. . D . . G 
+. . . . . . 
+C C C B F H 
+X Y I B F H 
+X Y I B R R 
+

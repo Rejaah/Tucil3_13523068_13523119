@@ -1,0 +1,421 @@
+Algoritma: A* Search
+Heuristik: Manhattan Distance
+Nodes dikunjungi: 13862
+Waktu eksekusi: 389 ms
+
+Papan Awal
+B B B Z L M 
+H C C Z L M 
+H . P P L M 
+D D J . . . 
+. I J E E . 
+. I F F G G 
+
+Gerakan 1: P-kiri
+B B B Z L M 
+H C C Z L M 
+H P P . L M 
+D D J . . . 
+. I J E E . 
+. I F F G G 
+
+Gerakan 2: Z-bawah
+B B B . L M 
+H C C . L M 
+H P P Z L M 
+D D J Z . . 
+. I J E E . 
+. I F F G G 
+
+Gerakan 3: B-kanan
+. B B B L M 
+H C C . L M 
+H P P Z L M 
+D D J Z . . 
+. I J E E . 
+. I F F G G 
+
+Gerakan 4: H-atas
+H B B B L M 
+H C C . L M 
+. P P Z L M 
+D D J Z . . 
+. I J E E . 
+. I F F G G 
+
+Gerakan 5: P-kiri
+H B B B L M 
+H C C . L M 
+P P . Z L M 
+D D J Z . . 
+. I J E E . 
+. I F F G G 
+
+Gerakan 6: J-atas
+H B B B L M 
+H C C . L M 
+P P J Z L M 
+D D J Z . . 
+. I . E E . 
+. I F F G G 
+
+Gerakan 7: E-kiri
+H B B B L M 
+H C C . L M 
+P P J Z L M 
+D D J Z . . 
+. I E E . . 
+. I F F G G 
+
+Gerakan 8: L-bawah
+H B B B . M 
+H C C . . M 
+P P J Z L M 
+D D J Z L . 
+. I E E L . 
+. I F F G G 
+
+Gerakan 9: M-bawah
+H B B B . . 
+H C C . . M 
+P P J Z L M 
+D D J Z L M 
+. I E E L . 
+. I F F G G 
+
+Gerakan 10: C-kanan
+H B B B . . 
+H . . C C M 
+P P J Z L M 
+D D J Z L M 
+. I E E L . 
+. I F F G G 
+
+Gerakan 11: B-kanan
+H . . B B B 
+H . . C C M 
+P P J Z L M 
+D D J Z L M 
+. I E E L . 
+. I F F G G 
+
+Gerakan 12: J-atas
+H . J B B B 
+H . J C C M 
+P P . Z L M 
+D D . Z L M 
+. I E E L . 
+. I F F G G 
+
+Gerakan 13: P-kanan
+H . J B B B 
+H . J C C M 
+. P P Z L M 
+D D . Z L M 
+. I E E L . 
+. I F F G G 
+
+Gerakan 14: D-kanan
+H . J B B B 
+H . J C C M 
+. P P Z L M 
+. D D Z L M 
+. I E E L . 
+. I F F G G 
+
+Gerakan 15: H-bawah
+. . J B B B 
+. . J C C M 
+. P P Z L M 
+. D D Z L M 
+H I E E L . 
+H I F F G G 
+
+Gerakan 16: D-kiri
+. . J B B B 
+. . J C C M 
+. P P Z L M 
+D D . Z L M 
+H I E E L . 
+H I F F G G 
+
+Gerakan 17: P-kiri
+. . J B B B 
+. . J C C M 
+P P . Z L M 
+D D . Z L M 
+H I E E L . 
+H I F F G G 
+
+Gerakan 18: J-bawah
+. . . B B B 
+. . . C C M 
+P P J Z L M 
+D D J Z L M 
+H I E E L . 
+H I F F G G 
+
+Gerakan 19: B-kiri
+. B B B . . 
+. . . C C M 
+P P J Z L M 
+D D J Z L M 
+H I E E L . 
+H I F F G G 
+
+Gerakan 20: M-atas
+. B B B . M 
+. . . C C M 
+P P J Z L M 
+D D J Z L . 
+H I E E L . 
+H I F F G G 
+
+Gerakan 21: C-kiri
+. B B B . M 
+C C . . . M 
+P P J Z L M 
+D D J Z L . 
+H I E E L . 
+H I F F G G 
+
+Gerakan 22: Z-atas
+. B B B . M 
+C C . Z . M 
+P P J Z L M 
+D D J . L . 
+H I E E L . 
+H I F F G G 
+
+Gerakan 23: L-atas
+. B B B L M 
+C C . Z L M 
+P P J Z L M 
+D D J . . . 
+H I E E . . 
+H I F F G G 
+
+Gerakan 24: J-atas
+. B B B L M 
+C C J Z L M 
+P P J Z L M 
+D D . . . . 
+H I E E . . 
+H I F F G G 
+
+Gerakan 25: D-kanan
+. B B B L M 
+C C J Z L M 
+P P J Z L M 
+. . . . D D 
+H I E E . . 
+H I F F G G 
+
+Gerakan 26: E-kanan
+. B B B L M 
+C C J Z L M 
+P P J Z L M 
+. . . . D D 
+H I . . E E 
+H I F F G G 
+
+Gerakan 27: J-bawah
+. B B B L M 
+C C . Z L M 
+P P . Z L M 
+. . J . D D 
+H I J . E E 
+H I F F G G 
+
+Gerakan 28: Z-bawah
+. B B B L M 
+C C . . L M 
+P P . . L M 
+. . J Z D D 
+H I J Z E E 
+H I F F G G 
+
+Gerakan 29: P-kanan
+. B B B L M 
+C C . . L M 
+. . P P L M 
+. . J Z D D 
+H I J Z E E 
+H I F F G G 
+
+Gerakan 30: C-kanan
+. B B B L M 
+. . C C L M 
+. . P P L M 
+. . J Z D D 
+H I J Z E E 
+H I F F G G 
+
+Gerakan 31: I-atas
+. B B B L M 
+. I C C L M 
+. I P P L M 
+. . J Z D D 
+H . J Z E E 
+H . F F G G 
+
+Gerakan 32: H-atas
+H B B B L M 
+H I C C L M 
+. I P P L M 
+. . J Z D D 
+. . J Z E E 
+. . F F G G 
+
+Gerakan 33: F-kiri
+H B B B L M 
+H I C C L M 
+. I P P L M 
+. . J Z D D 
+. . J Z E E 
+F F . . G G 
+
+Gerakan 34: J-bawah
+H B B B L M 
+H I C C L M 
+. I P P L M 
+. . . Z D D 
+. . J Z E E 
+F F J . G G 
+
+Gerakan 35: Z-bawah
+H B B B L M 
+H I C C L M 
+. I P P L M 
+. . . . D D 
+. . J Z E E 
+F F J Z G G 
+
+Gerakan 36: D-kiri
+H B B B L M 
+H I C C L M 
+. I P P L M 
+D D . . . . 
+. . J Z E E 
+F F J Z G G 
+
+Gerakan 37: L-bawah
+H B B B . M 
+H I C C L M 
+. I P P L M 
+D D . . L . 
+. . J Z E E 
+F F J Z G G 
+
+Gerakan 38: B-kanan
+H . B B B M 
+H I C C L M 
+. I P P L M 
+D D . . L . 
+. . J Z E E 
+F F J Z G G 
+
+Gerakan 39: I-atas
+H I B B B M 
+H I C C L M 
+. . P P L M 
+D D . . L . 
+. . J Z E E 
+F F J Z G G 
+
+Gerakan 40: P-kiri
+H I B B B M 
+H I C C L M 
+P P . . L M 
+D D . . L . 
+. . J Z E E 
+F F J Z G G 
+
+Gerakan 41: Z-atas
+H I B B B M 
+H I C C L M 
+P P . Z L M 
+D D . Z L . 
+. . J . E E 
+F F J . G G 
+
+Gerakan 42: J-atas
+H I B B B M 
+H I C C L M 
+P P J Z L M 
+D D J Z L . 
+. . . . E E 
+F F . . G G 
+
+Gerakan 43: G-kiri
+H I B B B M 
+H I C C L M 
+P P J Z L M 
+D D J Z L . 
+. . . . E E 
+F F G G . . 
+
+Gerakan 44: E-kiri
+H I B B B M 
+H I C C L M 
+P P J Z L M 
+D D J Z L . 
+E E . . . . 
+F F G G . . 
+
+Gerakan 45: Z-bawah
+H I B B B M 
+H I C C L M 
+P P J . L M 
+D D J Z L . 
+E E . Z . . 
+F F G G . . 
+
+Gerakan 46: J-bawah
+H I B B B M 
+H I C C L M 
+P P . . L M 
+D D J Z L . 
+E E J Z . . 
+F F G G . . 
+
+Gerakan 47: P-kanan
+H I B B B M 
+H I C C L M 
+. . P P L M 
+D D J Z L . 
+E E J Z . . 
+F F G G . . 
+
+Gerakan 48: L-bawah
+H I B B B M 
+H I C C . M 
+. . P P . M 
+D D J Z L . 
+E E J Z L . 
+F F G G L . 
+
+Gerakan 49: P-kanan
+H I B B B M 
+H I C C . M 
+. . . P P M 
+D D J Z L . 
+E E J Z L . 
+F F G G L . 
+
+Gerakan 50: M-bawah
+H I B B B . 
+H I C C . . 
+. . . P P . 
+D D J Z L M 
+E E J Z L M 
+F F G G L M 
+
+Gerakan 51: P-kanan
+H I B B B . 
+H I C C . . 
+. . . . . . 
+D D J Z L M 
+E E J Z L M 
+F F G G L M 
+

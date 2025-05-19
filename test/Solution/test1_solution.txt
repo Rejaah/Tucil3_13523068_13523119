@@ -1,0 +1,69 @@
+Algoritma: A* Search
+Heuristik: Manhattan Distance
+Nodes dikunjungi: 178
+Waktu eksekusi: 10 ms
+
+Papan Awal
+A A B . . F 
+. . B C D F 
+G P P C D F 
+G H . I I I 
+G H J . . . 
+L L J M M . 
+
+Gerakan 1: C-atas
+A A B C . F 
+. . B C D F 
+G P P . D F 
+G H . I I I 
+G H J . . . 
+L L J M M . 
+
+Gerakan 2: P-kanan
+A A B C . F 
+. . B C D F 
+G . P P D F 
+G H . I I I 
+G H J . . . 
+L L J M M . 
+
+Gerakan 3: D-atas
+A A B C D F 
+. . B C D F 
+G . P P . F 
+G H . I I I 
+G H J . . . 
+L L J M M . 
+
+Gerakan 4: P-kanan
+A A B C D F 
+. . B C D F 
+G . . P P F 
+G H . I I I 
+G H J . . . 
+L L J M M . 
+
+Gerakan 5: I-kiri
+A A B C D F 
+. . B C D F 
+G . . P P F 
+G H I I I . 
+G H J . . . 
+L L J M M . 
+
+Gerakan 6: F-bawah
+A A B C D . 
+. . B C D . 
+G . . P P . 
+G H I I I F 
+G H J . . F 
+L L J M M F 
+
+Gerakan 7: P-kanan
+A A B C D . 
+. . B C D . 
+G . . . . . 
+G H I I I F 
+G H J . . F 
+L L J M M F 
+
