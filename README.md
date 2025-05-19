@@ -3,7 +3,7 @@
 Program ini menyelesaikan permainan puzzle **Rush Hour** menggunakan beberapa algoritma pathfinding, yakni A\* Search, Uniform Cost Search (UCS), dan Greedy Best First Search. Dilengkapi dengan GUI interaktif dan animasi solusi.
 
 <p align="center">
-  <img src="img/test1.gif" alt="Demo" />
+  <img src="img/readme.gif" alt="Demo" />
 </p>
 
 ---
@@ -68,7 +68,7 @@ mvn clean javafx:run
 
 ---
 
-### 💻 Opsi Manual (Jika Tidak Menggunakan Maven)
+### 💻 Opsi Manual
 
 1. Arahkan ke direktori root proyek:
 
@@ -92,6 +92,17 @@ mvn clean javafx:run
    ```bash
    java --module-path <path-to-javafx>/lib --add-modules javafx.controls,javafx.fxml,javafx.graphics -cp bin gui.Launcher
    ```
+
+Ganti `<path-to-javafx>` dengan direktori instalasi JavaFX Anda jika diperlukan.
+
+---
+
+### Menggunakan IDE
+
+1. Impor proyek ke IDE pilihan Anda (Eclipse, IntelliJ IDEA, atau NetBeans)
+2. Konfigurasikan IDE untuk menggunakan JavaFX
+3. Build proyek menggunakan fungsi build IDE
+4. Jalankan kelas Launcher (`gui.Launcher`) dari IDE Anda. Salah satu caranya klik kanan pada Launcher, lalu run file.
 
 ---
 
