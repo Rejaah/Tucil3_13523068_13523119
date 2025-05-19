@@ -11,7 +11,7 @@ import backend.model.Parser;
 
 public class TestDriverAStar {
     public static void main(String[] args) {
-        String filePath = "src/test/model/board.txt"; // sesuaikan path file input Anda
+        String filePath = "test/test7.txt"; // sesuaikan path file input Anda
 
         try {
             // Parse board awal
