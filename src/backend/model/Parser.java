@@ -156,6 +156,7 @@ public class Parser {
             }
             
             if (cars.size() - (posMap.containsKey('P') ? 1 : 0) != declaredCars) {
+                int act = cars.size()-1;
                 throw new InvalidInputException(
                     "Jumlah mobil terdeteksi (" + (cars.size() - 1) +
                     ") tidak sesuai deklarasi (" + declaredCars + ")");
