@@ -10,19 +10,6 @@ import java.util.*;
 
 public class Parser {
 
-    /**
-     * Parse file .txt menjadi Board, mendeteksi exit 'K' di atas/samping/bawah.
-     *
-     * Format:
-     * Baris 1        : ROWS COLS
-     * Baris berikut : (opsional) count mobil (angka saja)
-     *                 (opsional) baris exit atas (mengandung satu 'K' dan spasi/dot, length ≤ COLS)
-     *                 ROWS baris grid (length=COLS or COLS+1 jika exit samping)
-     *                 (opsional) baris exit bawah (mengandung satu 'K' dan spasi/dot, length ≤ COLS)
-     *
-     * @param filePath path ke file input
-     * @return Board terbangun
-     */
     @SuppressWarnings("unused")
     public static Board parse(String filePath)
             throws IOException, InvalidInputException {
@@ -204,7 +191,6 @@ public class Parser {
         }
     }
 
-    /** Zobrist table [rows][cols][A–Z] */
     private static long[][][] generateZobristTable(int rows, int cols) {
         Random rnd = new Random(0);
         long[][][] table = new long[rows][cols][26];
@@ -218,14 +204,6 @@ public class Parser {
         return table;
     }
 
-    /**
-     * Parses a file and returns a Board.
-     * Wrapper method for compatibility with GUI.
-     * 
-     * @param filePath Path to the input file
-     * @return A Board object
-     * @throws ParserException if parsing fails
-     */
     public static Board parseFile(String filePath) throws backend.exception.ParserException {
         try {
             return parse(filePath);

@@ -1,7 +1,7 @@
 Algoritma: A* Search
 Heuristik: Manhattan Distance
-Nodes dikunjungi: 835
-Waktu eksekusi: 14 ms
+Nodes dikunjungi: 644
+Waktu eksekusi: 33 ms
 
 Papan Awal
 . A A B E E 
@@ -11,147 +11,163 @@ X Y C C C H
 X Y I . . H 
 R R I . . . 
 
-Gerakan 1: H-bawah
-. A A B E E 
+Gerakan 1: A-kiri
+A A . B E E 
 . . D B F G 
 P P D B F G 
+X Y C C C H 
+X Y I . . H 
+R R I . . . 
+
+Gerakan 2: D-atas
+A A D B E E 
+. . D B F G 
+P P . B F G 
+X Y C C C H 
+X Y I . . H 
+R R I . . . 
+
+Gerakan 3: P-kanan
+A A D B E E 
+. . D B F G 
+. P P B F G 
+X Y C C C H 
+X Y I . . H 
+R R I . . . 
+
+Gerakan 4: H-bawah
+A A D B E E 
+. . D B F G 
+. P P B F G 
 X Y C C C . 
 X Y I . . H 
 R R I . . H 
 
-Gerakan 2: C-kanan
-. A A B E E 
+Gerakan 5: C-kanan
+A A D B E E 
 . . D B F G 
-P P D B F G 
+. P P B F G 
 X Y . C C C 
 X Y I . . H 
 R R I . . H 
 
-Gerakan 3: I-atas
-. A A B E E 
+Gerakan 6: I-atas
+A A D B E E 
 . . D B F G 
-P P D B F G 
+. P P B F G 
 X Y I C C C 
 X Y I . . H 
 R R . . . H 
 
-Gerakan 4: R-kanan
-. A A B E E 
+Gerakan 7: R-kanan
+A A D B E E 
 . . D B F G 
-P P D B F G 
+. P P B F G 
 X Y I C C C 
 X Y I . . H 
 . . . R R H 
 
-Gerakan 5: Y-bawah
-. A A B E E 
+Gerakan 8: Y-bawah
+A A D B E E 
 . . D B F G 
-P P D B F G 
+. P P B F G 
 X . I C C C 
 X Y I . . H 
 . Y . R R H 
 
-Gerakan 6: I-bawah
-. A A B E E 
+Gerakan 9: I-bawah
+A A D B E E 
 . . D B F G 
-P P D B F G 
+. P P B F G 
 X . . C C C 
 X Y I . . H 
 . Y I R R H 
 
-Gerakan 7: X-bawah
-. A A B E E 
-. . D B F G 
-P P D B F G 
+Gerakan 10: X-atas
+A A D B E E 
+X . D B F G 
+X P P B F G 
 . . . C C C 
-X Y I . . H 
-X Y I R R H 
+. Y I . . H 
+. Y I R R H 
 
-Gerakan 8: C-kiri
-. A A B E E 
-. . D B F G 
-P P D B F G 
+Gerakan 11: C-kiri
+A A D B E E 
+X . D B F G 
+X P P B F G 
 C C C . . . 
-X Y I . . H 
-X Y I R R H 
+. Y I . . H 
+. Y I R R H 
 
-Gerakan 9: A-kiri
-A A . B E E 
-. . D B F G 
-P P D B F G 
-C C C . . . 
-X Y I . . H 
-X Y I R R H 
-
-Gerakan 10: H-atas
-A A . B E E 
-. . D B F G 
-P P D B F G 
+Gerakan 12: H-atas
+A A D B E E 
+X . D B F G 
+X P P B F G 
 C C C . . H 
-X Y I . . H 
-X Y I R R . 
+. Y I . . H 
+. Y I R R . 
 
-Gerakan 11: R-kanan
-A A . B E E 
-. . D B F G 
-P P D B F G 
+Gerakan 13: R-kanan
+A A D B E E 
+X . D B F G 
+X P P B F G 
 C C C . . H 
-X Y I . . H 
-X Y I . R R 
+. Y I . . H 
+. Y I . R R 
 
-Gerakan 12: B-bawah
-A A . . E E 
-. . D . F G 
-P P D . F G 
-C C C B . H 
-X Y I B . H 
-X Y I B R R 
-
-Gerakan 13: F-bawah
-A A . . E E 
-. . D . . G 
-P P D . . G 
-C C C B F H 
-X Y I B F H 
-X Y I B R R 
-
-Gerakan 14: D-atas
+Gerakan 14: B-bawah
 A A D . E E 
-. . D . . G 
-P P . . . G 
-C C C B F H 
-X Y I B F H 
-X Y I B R R 
+X . D . F G 
+X P P . F G 
+C C C B . H 
+. Y I B . H 
+. Y I B R R 
 
 Gerakan 15: P-kanan
 A A D . E E 
-. . D . . G 
-. . P P . G 
-C C C B F H 
-X Y I B F H 
-X Y I B R R 
+X . D . F G 
+X . P P F G 
+C C C B . H 
+. Y I B . H 
+. Y I B R R 
 
-Gerakan 16: E-kiri
+Gerakan 16: F-bawah
+A A D . E E 
+X . D . . G 
+X . P P . G 
+C C C B F H 
+. Y I B F H 
+. Y I B R R 
+
+Gerakan 17: P-kanan
+A A D . E E 
+X . D . . G 
+X . . P P G 
+C C C B F H 
+. Y I B F H 
+. Y I B R R 
+
+Gerakan 18: E-kiri
 A A D E E . 
-. . D . . G 
-. . P P . G 
+X . D . . G 
+X . . P P G 
 C C C B F H 
-X Y I B F H 
-X Y I B R R 
+. Y I B F H 
+. Y I B R R 
 
-Gerakan 17: G-atas
+Gerakan 19: G-atas
 A A D E E G 
-. . D . . G 
-. . P P . . 
+X . D . . G 
+X . . P P . 
 C C C B F H 
-X Y I B F H 
-X Y I B R R 
+. Y I B F H 
+. Y I B R R 
 
-Gerakan 18: P-kanan
+Gerakan 20: P-kanan
 A A D E E G 
-. . D . . G 
-. . . . . . 
+X . D . . G 
+X . . . P P 
 C C C B F H 
-X Y I B F H 
-X Y I B R R 
+. Y I B F H 
+. Y I B R R 
 

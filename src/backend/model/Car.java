@@ -65,22 +65,11 @@ public class Car {
                 ", col=" + col +
                 '}';
     }
-
-    //tambahan 
-
-    /**
-     * Checks if this car is vertical (not horizontal).
-     * @return true if vertical, false if horizontal
-     */
     
     public boolean isVertical() {
         return !isHorizontal;
     }
-
-    /**
-     * Checks if this car is the primary car (target to exit).
-     * @return true if primary car, false otherwise
-     */
+    
     public boolean isPrimary() {
         return this.id == 'P';
     }

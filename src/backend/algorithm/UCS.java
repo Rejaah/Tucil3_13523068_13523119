@@ -23,10 +23,6 @@ public class UCS implements PathfindingAlgorithm {
             UCSNode currentNode = queue.poll();
             nodesVisited++;
 
-            // // Tampilkan state board yang sedang diperiksa
-            // System.out.printf("Visited node #%d, cost = %d%n", nodesVisited, currentNode.cost);
-            // System.out.println(currentNode.board);  // panggil toString() di Board
-
             if (currentNode.getBoard().isGoal()) {
                 executionTime = System.currentTimeMillis() - startTime;
                 return reconstructPath(currentNode);
@@ -41,7 +37,7 @@ public class UCS implements PathfindingAlgorithm {
         }
 
         executionTime = System.currentTimeMillis() - startTime;
-        return Collections.emptyList(); // Tidak ada solusi ditemukan
+        return Collections.emptyList(); 
     }
 
     private static class UCSNode implements SearchNode {
