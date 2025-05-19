@@ -139,17 +139,14 @@ public class Parser {
                 }
             }
 
+            validateCarConnections(posMap);
+
             // 8) Bangun daftar Car
             List<Car> cars = new ArrayList<>();
             for (var e : posMap.entrySet()) {
                 char id = e.getKey();
                 List<int[]> coords = e.getValue();
                 int length = coords.size();
-                
-                // 1x1 mobil tidak valid karena tidak memiliki arah
-                if (length == 1) {
-                    throw new InvalidInputException("Mobil dengan ukuran 1x1 tidak diperbolehkan.");
-                }
 
                 int minR = coords.stream().mapToInt(p -> p[0]).min().getAsInt();
                 int minC = coords.stream().mapToInt(p -> p[1]).min().getAsInt();
@@ -160,7 +157,7 @@ public class Parser {
             
             if (cars.size() - (posMap.containsKey('P') ? 1 : 0) != declaredCars) {
                 throw new InvalidInputException(
-                    "Jumlah mobil terdeteksi (" + cars.size() +
+                    "Jumlah mobil terdeteksi (" + (cars.size() - 1) +
                     ") tidak sesuai deklarasi (" + declaredCars + ")");
             }
             
@@ -204,11 +201,98 @@ public class Parser {
         return table;
     }
 
+    private static void validateCarConnections(Map<Character, List<int[]>> posMap) 
+        throws InvalidInputException {
+        
+        for (Map.Entry<Character, List<int[]>> entry : posMap.entrySet()) {
+            char id = entry.getKey();
+            List<int[]> positions = entry.getValue();
+            
+            List<Set<int[]>> components = new ArrayList<>();
+            for (int[] pos : positions) {
+                boolean connected = false;
+                
+                for (Set<int[]> component : components) {
+                    for (int[] existing : component) {
+                        if (isAdjacent(pos, existing)) {
+                            component.add(pos);
+                            connected = true;
+                            break;
+                        }
+                    }
+                    if (connected) break;
+                }
+                
+                if (!connected) {
+                    Set<int[]> newComponent = new HashSet<>();
+                    newComponent.add(pos);
+                    components.add(newComponent);
+                }
+            }
+            
+            if (components.size() > 1) {
+                throw new InvalidInputException(
+                    "Mobil " + id + " terdeteksi di " + components.size() + 
+                    " lokasi terpisah.");
+            }
+            
+            validateCarShape(id, positions);
+        }
+    }
+
+
+    private static boolean isAdjacent(int[] pos1, int[] pos2) {
+        return (Math.abs(pos1[0] - pos2[0]) == 1 && pos1[1] == pos2[1]) ||  
+            (Math.abs(pos1[1] - pos2[1]) == 1 && pos1[0] == pos2[0]);
+    }
+
+    private static void validateCarShape(char id, List<int[]> positions) 
+        throws InvalidInputException {
+        
+        if (positions.size() == 1) {
+            throw new InvalidInputException(
+                "Mobil " + id + " berukuran 1x1 tidak diperbolehkan");
+        }
+        
+        boolean allRowsSame = positions.stream().mapToInt(p -> p[0]).distinct().count() == 1;
+        boolean allColsSame = positions.stream().mapToInt(p -> p[1]).distinct().count() == 1;
+        
+        if (!allRowsSame && !allColsSame) {
+            throw new InvalidInputException(
+                "Mobil " + id + " tidak membentuk garis lurus.");
+        }
+        
+        if (allRowsSame) {
+            List<int[]> sorted = positions.stream()
+                .sorted(Comparator.comparingInt(p -> p[1]))
+                .toList();
+                
+            for (int i = 1; i < sorted.size(); i++) {
+                if (sorted.get(i)[1] != sorted.get(i-1)[1] + 1) {
+                    throw new InvalidInputException(
+                        "Mobil " + id + " terputus");
+                }
+            }
+        }
+        else {
+            List<int[]> sorted = positions.stream()
+                .sorted(Comparator.comparingInt(p -> p[0]))
+                .toList();
+                
+            for (int i = 1; i < sorted.size(); i++) {
+                if (sorted.get(i)[0] != sorted.get(i-1)[0] + 1) {
+                    throw new InvalidInputException(
+                        "Mobil " + id + " terputus");
+                }
+            }
+        }
+    }
+
     public static Board parseFile(String filePath) throws backend.exception.ParserException {
         try {
             return parse(filePath);
         } catch (IOException | InvalidInputException e) {
-            throw new ParserException("Error parsing file: " + e.getMessage(), e);
+            throw new ParserException("Parsing file: " + e.getMessage(), e);
         }
     }
 }
