@@ -1,11 +1,14 @@
-9 9
-21
-NNNSS....
-U.L......
-UWLHHGGFF
-TW..A.C.E
-TWPPABCDEK
-TW...B.D.
-VWMRRJJII
-V.M......
-OOOQQ....
+11 11
+24
+     K     
+.GGI.QQR...
+.BBI...R.Y.
+....OOOR.Y.
+DJLLN.S..Y.
+DJ..N.S..CC
+..MH..ST...
+.EMH..ST...
+.EAHWWWUUUV
+FEA..P....V
+F.A..P....V
+F.XX.P..ZZZ
