@@ -6,7 +6,6 @@ import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-
 import java.io.*;
 import java.util.*;
 
@@ -39,10 +38,10 @@ public class RushHourGUI extends Application {
         boardView.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         ScrollPane scrollPane = new ScrollPane(boardView);
-        scrollPane.setFitToWidth(true);  
-        scrollPane.setFitToHeight(true); 
-
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
         scrollPane.setPannable(true);
+
         StackPane centerWrapper = new StackPane(scrollPane);
         centerWrapper.setPadding(new Insets(20));
 
@@ -55,7 +54,6 @@ public class RushHourGUI extends Application {
 
         Scene scene = new Scene(root, 800, 600);
         scene.getRoot().setStyle("-fx-font-family: 'Arial'; -fx-background-color: #f5f5f5;");
-
         primaryStage.setTitle("Rush Hour Puzzle Solver");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -71,34 +69,24 @@ public class RushHourGUI extends Application {
 
         Button fileButton = new Button("Select Puzzle File");
         fileButton.setStyle("-fx-background-color: #4285f4; -fx-text-fill: white; -fx-font-weight: bold;");
+
         fileNameLabel = new Label("No file selected");
         fileNameLabel.setWrapText(true);
 
         Label algoLabel = new Label("Select Algorithm:");
         algorithmCombo = new ComboBox<>();
-        algorithmCombo.getItems().addAll(
-            "Greedy Best First Search",
-            "Uniform Cost Search (UCS)",
-            "A* Search"
-        );
+        algorithmCombo.getItems().addAll("Greedy Best First Search", "Uniform Cost Search (UCS)", "A* Search");
         algorithmCombo.setValue("A* Search");
         algorithmCombo.setPrefWidth(200);
 
         Label heuristicLabel = new Label("Select Heuristic:");
         heuristicCombo = new ComboBox<>();
-        heuristicCombo.getItems().addAll(
-            "Manhattan Distance", 
-            "Blocking Cars"
-        );
+        heuristicCombo.getItems().addAll("Manhattan Distance", "Blocking Cars");
         heuristicCombo.setValue("Manhattan Distance");
         heuristicCombo.setPrefWidth(200);
 
         algorithmCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if ("Uniform Cost Search (UCS)".equals(newVal)) {
-                heuristicCombo.setDisable(true);
-            } else {
-                heuristicCombo.setDisable(false);
-            }
+            heuristicCombo.setDisable("Uniform Cost Search (UCS)".equals(newVal));
         });
 
         runButton = new Button("Run Solver");
@@ -119,34 +107,21 @@ public class RushHourGUI extends Application {
         statsBox.getChildren().addAll(new Label("Statistics:"), statsLabel);
 
         panel.getChildren().addAll(
-            titleLabel,
-            new Separator(),
-            fileButton,
-            fileNameLabel,
-            new Separator(),
-            algoLabel,
-            algorithmCombo,
-            new Separator(),
-            heuristicLabel,
-            heuristicCombo,
-            runButton,
-            saveButton,
-            new Separator(),
-            statsBox
+            titleLabel, new Separator(),
+            fileButton, fileNameLabel, new Separator(),
+            algoLabel, algorithmCombo, new Separator(),
+            heuristicLabel, heuristicCombo,
+            runButton, saveButton, new Separator(), statsBox
         );
 
         fileButton.setOnAction(e -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Select Rush Hour Puzzle File");
-            fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt")
-            );
-
-            selectedFile = fileChooser.showOpenDialog(stage);
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Select Rush Hour Puzzle File");
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+            selectedFile = chooser.showOpenDialog(stage);
 
             if (selectedFile != null) {
                 fileNameLabel.setText(selectedFile.getName());
-
                 try {
                     board = Parser.parseFile(selectedFile.getPath());
                     boardView.initializeBoard(board);
@@ -156,29 +131,35 @@ public class RushHourGUI extends Application {
                 } catch (ParserException ex) {
                     fileNameLabel.setText("Error: " + ex.getMessage());
                     runButton.setDisable(true);
-                } catch (Exception ex) {
-                    fileNameLabel.setText("Error: " + ex.getMessage());
-                    runButton.setDisable(true);
                 }
             }
         });
 
         runButton.setOnAction(e -> {
             if (board == null) return;
-            String algorithmName = algorithmCombo.getValue();
-            Heuristic heuristic = null;
-            if (!"Uniform Cost Search (UCS)".equals(algorithmName)) {
-                String heuristicName = heuristicCombo.getValue();
-                heuristic = getHeuristicByName(heuristicName);
-            }
+            String algoName = algorithmCombo.getValue();
+            Heuristic heuristic = !"Uniform Cost Search (UCS)".equals(algoName)
+                ? getHeuristicByName(heuristicCombo.getValue()) : null;
 
-            PathfindingAlgorithm algorithm = getAlgorithmByName(algorithmName, heuristic);
-
+            PathfindingAlgorithm algorithm = getAlgorithmByName(algoName, heuristic);
             if (algorithm != null) {
                 try {
                     statsLabel.setText("Running algorithm...");
                     solution = algorithm.solve(board, heuristic);
                     lastAlgorithm = algorithm;
+
+                    if (solution == null || solution.isEmpty()) {
+                        statsLabel.setText(String.format(
+                            "Algorithm: %s\nHeuristic: %s\nNodes visited: %d\nExecution time: %d ms\nNo solution found.",
+                            algorithm.getName(),
+                            algorithm.getHeuristicName(),
+                            algorithm.getNodesVisited(),
+                            algorithm.getExecutionTime()
+                        ));
+                        showError("No Solution", "No solution could be found", "The puzzle has no valid solution path.");
+                        saveButton.setDisable(true);
+                        return;
+                    }
 
                     statsLabel.setText(String.format(
                         "Algorithm: %s\nHeuristic: %s\nNodes visited: %d\nExecution time: %d ms\nSolution steps: %d",
@@ -193,12 +174,11 @@ public class RushHourGUI extends Application {
                     setupSlider(solution.size());
                     boardView.setSolution(solution);
                     saveButton.setDisable(false);
+
                 } catch (Exception ex) {
                     statsLabel.setText("Error: " + ex.getMessage());
                     showError("Algorithm Error", "Error running algorithm", ex.getMessage());
                 }
-            } else {
-                showError("Algorithm Error", "Invalid algorithm selected", "Please select a valid algorithm");
             }
         });
 
@@ -208,35 +188,22 @@ public class RushHourGUI extends Application {
                 return;
             }
 
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Solution");
-            fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt")
-            );
-            fileChooser.setInitialFileName("rush_hour_solution.txt");
-
-            File saveFile = fileChooser.showSaveDialog(stage);
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Save Solution");
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+            chooser.setInitialFileName("rush_hour_solution.txt");
+            File saveFile = chooser.showSaveDialog(stage);
 
             if (saveFile != null) {
                 try {
-                    String algorithmName = algorithmCombo.getValue();
-                    String heuristicName = "None";
-                    if (!"Uniform Cost Search (UCS)".equals(algorithmName)) {
-                        heuristicName = heuristicCombo.getValue();
-                    }
-
-                    int nodesVisited = lastAlgorithm != null ? lastAlgorithm.getNodesVisited() : 0;
-                    long executionTime = lastAlgorithm != null ? lastAlgorithm.getExecutionTime() : 0;
-
+                    String algo = algorithmCombo.getValue();
+                    String heur = "Uniform Cost Search (UCS)".equals(algo) ? "None" : heuristicCombo.getValue();
                     boolean success = exportSolution(
-                        solution, 
-                        algorithmName, 
-                        heuristicName, 
-                        nodesVisited, 
-                        executionTime, 
+                        solution, algo, heur,
+                        lastAlgorithm.getNodesVisited(),
+                        lastAlgorithm.getExecutionTime(),
                         saveFile
                     );
-
                     if (success) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Save Successful");
@@ -259,26 +226,23 @@ public class RushHourGUI extends Application {
         controls.setAlignment(Pos.CENTER);
 
         Button prevButton = new Button("Previous");
-        prevButton.setId("prevButton");
-
         Button nextButton = new Button("Next");
-        nextButton.setId("nextButton");
-
         Button playButton = new Button("Play");
-        playButton.setId("playButton");
-
         Button pauseButton = new Button("Pause");
-        pauseButton.setId("pauseButton");
-
         Slider slider = new Slider(0, 1, 0);
+
+        prevButton.setId("prevButton");
+        nextButton.setId("nextButton");
+        playButton.setId("playButton");
+        pauseButton.setId("pauseButton");
         slider.setId("stepSlider");
         slider.setPrefWidth(200);
 
-        String buttonStyle = "-fx-background-color: #90caf9; -fx-text-fill: black;";
-        prevButton.setStyle(buttonStyle);
-        nextButton.setStyle(buttonStyle);
-        playButton.setStyle(buttonStyle);
-        pauseButton.setStyle(buttonStyle);
+        String style = "-fx-background-color: #90caf9; -fx-text-fill: black;";
+        prevButton.setStyle(style);
+        nextButton.setStyle(style);
+        playButton.setStyle(style);
+        pauseButton.setStyle(style);
 
         prevButton.setDisable(true);
         nextButton.setDisable(true);
@@ -286,36 +250,24 @@ public class RushHourGUI extends Application {
         pauseButton.setDisable(true);
         slider.setDisable(true);
 
-        controls.getChildren().addAll(
-            prevButton, 
-            playButton, 
-            pauseButton, 
-            nextButton, 
-            slider
-        );
-
+        controls.getChildren().addAll(prevButton, playButton, pauseButton, nextButton, slider);
         return controls;
     }
 
-    private boolean exportSolution(List<Board> solution, String algorithm, String heuristic, 
-                                  int nodesVisited, long executionTime, File outputFile) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
-            writer.write("Algoritma: " + algorithm + "\n");
-            writer.write("Heuristik: " + heuristic + "\n");
-            writer.write("Nodes dikunjungi: " + nodesVisited + "\n");
-            writer.write("Waktu eksekusi: " + executionTime + " ms\n\n");
+    private boolean exportSolution(List<Board> solution, String algo, String heur, int nodesVisited, long time, File file) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write("Algorithm: " + algo + "\n");
+            writer.write("Heuristic: " + heur + "\n");
+            writer.write("Nodes visited: " + nodesVisited + "\n");
+            writer.write("Execution time: " + time + " ms\n\n");
 
-            writer.write("Papan Awal\n");
-            writer.write(boardToString(solution.get(0)) + "\n");
+            writer.write("Papan Awal:\n");
+            writer.write(solution.get(0).toString() + "\n");
 
             for (int i = 1; i < solution.size(); i++) {
-                Board prevBoard = solution.get(i-1);
-                Board currBoard = solution.get(i);
-                String moveInfo = identifyMove(prevBoard, currBoard);
-                writer.write("Gerakan " + i + ": " + moveInfo + "\n");
-                writer.write(boardToString(currBoard) + "\n");
+                writer.write("Gerakan " + i + ": " + identifyMove(solution.get(i - 1), solution.get(i)) + "\n");
+                writer.write(solution.get(i).toString() + "\n");
             }
-
             return true;
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -323,87 +275,65 @@ public class RushHourGUI extends Application {
         }
     }
 
-    private String boardToString(Board board) {
-        return board.toString();
-    }
-
-    private String identifyMove(Board prevBoard, Board currBoard) {
-        for (Car car1 : prevBoard.getCars()) {
-            Car car2 = findCarById(currBoard, car1.getId());
-            if (car2 != null) {
-                if (car1.getRow() != car2.getRow() || car1.getCol() != car2.getCol()) {
-                    String direction;
-                    if (car1.isHorizontal()) {
-                        direction = car2.getCol() > car1.getCol() ? "kanan" : "kiri";
-                    } else {
-                        direction = car2.getRow() > car1.getRow() ? "bawah" : "atas";
-                    }
-                    return car1.getId() + "-" + direction;
-                }
+    private String identifyMove(Board prev, Board curr) {
+        for (Car car1 : prev.getCars()) {
+            Car car2 = findCarById(curr, car1.getId());
+            if (car2 != null && (car1.getRow() != car2.getRow() || car1.getCol() != car2.getCol())) {
+                String dir = car1.isHorizontal() ?
+                    (car2.getCol() > car1.getCol() ? "Kanan" : "Kiri") :
+                    (car2.getRow() > car1.getRow() ? "Bawah" : "Atas");
+                return car1.getId() + " - " + dir;
             }
         }
-
-        return "unknown-unknown";
+        return "unknown";
     }
 
     private Car findCarById(Board board, char id) {
-        for (Car car : board.getCars()) {
-            if (car.getId() == id) {
-                return car;
-            }
-        }
-        return null;
+        return board.getCars().stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     private PathfindingAlgorithm getAlgorithmByName(String name, Heuristic heuristic) {
-        switch (name) {
-            case "Greedy Best First Search":
-                return new backend.algorithm.GBFS(heuristic);
-            case "Uniform Cost Search (UCS)":
-                return new backend.algorithm.UCS(); 
-            case "A* Search":
-                return new backend.algorithm.AStar(heuristic);
-            default:
-                return null;
-        }
+        return switch (name) {
+            case "Greedy Best First Search" -> new GBFS(heuristic);
+            case "Uniform Cost Search (UCS)" -> new UCS();
+            case "A* Search" -> new AStar(heuristic);
+            default -> null;
+        };
     }
 
     private Heuristic getHeuristicByName(String name) {
-        switch (name) {
-            case "Manhattan Distance":
-                return new backend.util.HeuristicManhattan();
-            case "Blocking Cars":
-                return new backend.util.HeuristicBlocking();
-            default:
-                return null;
-        }
+        return switch (name) {
+            case "Manhattan Distance" -> new HeuristicManhattan();
+            case "Blocking Cars" -> new HeuristicBlocking();
+            default -> null;
+        };
     }
 
     private void enableAnimationControls() {
-        Button prevButton = findNodeById(animationControls, "prevButton");
-        Button nextButton = findNodeById(animationControls, "nextButton");
-        Button playButton = findNodeById(animationControls, "playButton");
-        Button pauseButton = findNodeById(animationControls, "pauseButton");
+        Button prev = findNodeById(animationControls, "prevButton");
+        Button next = findNodeById(animationControls, "nextButton");
+        Button play = findNodeById(animationControls, "playButton");
+        Button pause = findNodeById(animationControls, "pauseButton");
         Slider slider = findNodeById(animationControls, "stepSlider");
 
-        if (prevButton != null) {
-            prevButton.setDisable(false);
-            prevButton.setOnAction(e -> boardView.previousStep());
+        if (prev != null) {
+            prev.setDisable(false);
+            prev.setOnAction(e -> boardView.previousStep());
         }
 
-        if (nextButton != null) {
-            nextButton.setDisable(false);
-            nextButton.setOnAction(e -> boardView.nextStep());
+        if (next != null) {
+            next.setDisable(false);
+            next.setOnAction(e -> boardView.nextStep());
         }
 
-        if (playButton != null) {
-            playButton.setDisable(false);
-            playButton.setOnAction(e -> boardView.playAnimation());
+        if (play != null) {
+            play.setDisable(false);
+            play.setOnAction(e -> boardView.playAnimation());
         }
 
-        if (pauseButton != null) {
-            pauseButton.setDisable(false);
-            pauseButton.setOnAction(e -> boardView.pauseAnimation());
+        if (pause != null) {
+            pause.setDisable(false);
+            pause.setOnAction(e -> boardView.pauseAnimation());
         }
 
         if (slider != null) {
@@ -411,25 +341,22 @@ public class RushHourGUI extends Application {
         }
     }
 
-    private void setupSlider(int solutionSize) {
+    private void setupSlider(int size) {
         Slider slider = findNodeById(animationControls, "stepSlider");
-
         if (slider != null) {
             slider.setMin(0);
-            slider.setMax(solutionSize - 1);
+            slider.setMax(size - 1);
             slider.setValue(0);
             slider.setBlockIncrement(1);
-            slider.setMajorTickUnit(Math.max(1, solutionSize / 10));
+            slider.setMajorTickUnit(Math.max(1, size / 10));
             slider.setMinorTickCount(0);
             slider.setSnapToTicks(true);
 
-            slider.valueProperty().addListener((obs, oldVal, newVal) -> 
-                boardView.goToStep(newVal.intValue())
-            );
+            slider.valueProperty().addListener((obs, oldVal, newVal) ->
+                boardView.goToStep(newVal.intValue()));
 
-            boardView.currentStepProperty().addListener((obs, oldVal, newVal) -> 
-                slider.setValue(newVal.intValue())
-            );
+            boardView.currentStepProperty().addListener((obs, oldVal, newVal) ->
+                slider.setValue(newVal.intValue()));
         }
     }
 
